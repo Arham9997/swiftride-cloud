@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Booking Confirmed — SwiftRide Cloud</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/payment.css">
+</head>
+<body>
+
+<div id="sr-navbar-mount"></div>
+
+<div class="result-wrap">
+  <div style="width:100%;">
+    <div class="result-card" style="margin-bottom:24px;">
+      <div class="result-icon success"><i class="fa-solid fa-check"></i></div>
+      <h1>Booking Confirmed!</h1>
+      <p class="desc">Your ticket has been booked successfully. A copy has been sent to your email and SMS.</p>
+    </div>
+
+    <div class="ticket-card invoice-card" id="ticketCard"></div>
+
+    <div class="flex-center" style="gap:12px; margin-top:26px; flex-wrap:wrap;">
+      <button class="btn btn-outline" id="downloadBtn"><i class="fa-solid fa-download"></i> Download Ticket</button>
+      <a href="dashboard.html" class="btn btn-primary">Go to Dashboard <i class="fa-solid fa-arrow-right"></i></a>
+    </div>
+  </div>
+</div>
+
+<div id="sr-footer-mount"></div>
+
+<script src="js/data.js"></script>
+<script src="js/layout.js"></script>
+<script src="js/app.js"></script>
+<script>
+  srRenderNavbar("", true);
+  srRenderFooter();
+
+  const booking = JSON.parse(sessionStorage.getItem("sr_last_booking") || "null");
+  if (!booking) {
+    window.location.href = "search.html";
+  } else {
+    document.getElementById("ticketCard").innerHTML = `
+      <div class="ticket-stub">
+        <div class="flex-between">
+          <div>
+            <div style="font-size:11px; opacity:.6; text-transform:uppercase; letter-spacing:.06em;">Booking ID</div>
+            <div class="mono" style="font-size:16px; font-weight:700; margin-top:2px;">${booking.id}</div>
+          </div>
+          <span class="badge badge-success"><i class="fa-solid fa-circle-check"></i> Confirmed</span>
+        </div>
+        <div class="flex-between" style="margin-top:22px;">
+          <div><div style="font-family:var(--font-mono); font-size:20px; font-weight:700;">${booking.bus.depTime}</div><div style="font-size:12px; opacity:.65; margin-top:2px;">${booking.source}</div></div>
+          <div style="flex:1; height:1px; background:rgba(255,255,255,0.25); margin:0 16px; position:relative; top:-8px;"></div>
+          <i class="fa-solid fa-bus" style="opacity:.7;"></i>
+          <div style="flex:1; height:1px; background:rgba(255,255,255,0.25); margin:0 16px; position:relative; top:-8px;"></div>
+          <div style="text-align:right;"><div style="font-family:var(--font-mono); font-size:20px; font-weight:700;">${booking.bus.arrTime}</div><div style="font-size:12px; opacity:.65; margin-top:2px;">${booking.destination}</div></div>
+        </div>
+      </div>
+      <div class="ticket-perf"><span class="notch left"></span><span class="notch right"></span></div>
+      <div style="padding:22px;">
+        <div class="grid" style="grid-template-columns: 1fr 1fr; gap:16px;">
+          <div><div class="text-muted" style="font-size:11px; text-transform:uppercase;">Passenger</div><div style="font-weight:700; margin-top:3px;">${booking.passenger.name}</div></div>
+          <div><div class="text-muted" style="font-size:11px; text-transform:uppercase;">Seats</div><div class="mono" style="font-weight:700; margin-top:3px;">${booking.seats.join(", ")}</div></div>
+          <div><div class="text-muted" style="font-size:11px; text-transform:uppercase;">Operator</div><div style="font-weight:700; margin-top:3px;">${booking.bus.operator}</div></div>
+          <div><div class="text-muted" style="font-size:11px; text-transform:uppercase;">Bus Type</div><div style="font-weight:700; margin-top:3px;">${booking.bus.type}</div></div>
+          <div><div class="text-muted" style="font-size:11px; text-transform:uppercase;">Travel Date</div><div style="font-weight:700; margin-top:3px;">${new Date(booking.date+"T00:00").toLocaleDateString("en-IN",{day:'numeric',month:'short',year:'numeric'})}</div></div>
+          <div><div class="text-muted" style="font-size:11px; text-transform:uppercase;">Amount Paid</div><div class="mono" style="font-weight:700; margin-top:3px; color:var(--orange-600);">${srFormatCurrency(booking.fare.total)}</div></div>
+        </div>
+      </div>
+      <div class="qr-stub">
+        <div class="qr-frame"><i class="fa-solid fa-qrcode" style="font-size:70px; color:var(--navy-900);"></i></div>
+      </div>
+      <div style="text-align:center; padding:0 22px 20px; font-size:11.5px; color:var(--ink-500);">Show this QR code to the conductor while boarding</div>
+    `;
+
+    document.getElementById("downloadBtn").addEventListener("click", () => {
+      srToast("Ticket download started (demo)", "success");
+    });
+  }
+</script>
+</body>
+</html>

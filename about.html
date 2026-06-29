@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About Us — SwiftRide Cloud</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/home.css">
+<link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+
+<div id="sr-navbar-mount"></div>
+
+<header class="page-hero">
+  <div class="container">
+    <h1>Built to make bus travel feel effortless</h1>
+    <p>SwiftRide Cloud connects passengers and operators on a single cloud-native platform — fast bookings, transparent pricing, and live visibility into every journey.</p>
+  </div>
+</header>
+
+<div class="container">
+  <div class="about-stats reveal">
+    <div class="about-stat-card"><div class="num">350+</div><div class="label">Cities Connected</div></div>
+    <div class="about-stat-card"><div class="num">212</div><div class="label">Operator Partners</div></div>
+    <div class="about-stat-card"><div class="num">48,900+</div><div class="label">Registered Travelers</div></div>
+    <div class="about-stat-card"><div class="num">4.8/5</div><div class="label">Average Rating</div></div>
+  </div>
+</div>
+
+<section class="section">
+  <div class="container">
+    <div class="grid reveal" style="grid-template-columns: 1fr 1fr; gap:50px; align-items:center;">
+      <div>
+        <div class="eyebrow">Our Story</div>
+        <h2 style="font-size:30px; line-height:1.2;">Started by people tired of overbooked counters and lost tickets</h2>
+        <p class="text-muted" style="margin-top:16px; line-height:1.75; font-size:14.5px;">SwiftRide Cloud began as a college cloud-computing project exploring how scalable backend architecture could fix one of India's most common travel frustrations — unreliable bus bookings. What started as a prototype grew into a full booking platform with real-time seat availability, secure cloud payments, and live tracking built on a modern REST API.</p>
+        <p class="text-muted" style="margin-top:14px; line-height:1.75; font-size:14.5px;">Today, the same principles guide the platform: every booking should be instant, every payment secure, and every passenger should know exactly where their bus is.</p>
+      </div>
+      <img src="https://images.unsplash.com/photo-1570125909232-eb263c188f7e?w=600&q=80" alt="Bus on highway" style="border-radius: var(--r-xl); box-shadow: var(--shadow-lg);">
+    </div>
+  </div>
+</section>
+
+<section class="section" style="background:var(--white);">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow" style="justify-content:center; display:flex;">Milestones</div>
+      <h2>How we got here</h2>
+    </div>
+    <div class="timeline reveal">
+      <div class="timeline-item"><span class="dot"></span><div class="year">2024</div><h4>Project prototype launched</h4><p>First working version built as a cloud computing capstone, covering bookings for two routes.</p></div>
+      <div class="timeline-item"><span class="dot"></span><div class="year">2025</div><h4>Cloud database migration</h4><p>Moved to MongoDB Atlas for scalable, real-time seat availability across all routes.</p></div>
+      <div class="timeline-item"><span class="dot"></span><div class="year">2025</div><h4>Operator partner program</h4><p>Opened the platform to independent bus operators with dedicated fleet management tools.</p></div>
+      <div class="timeline-item"><span class="dot"></span><div class="year">2026</div><h4>Live tracking & digital tickets</h4><p>Introduced QR-based boarding and real-time bus location tracking platform-wide.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow" style="justify-content:center; display:flex;">The Team</div>
+      <h2>Small team, cloud-first mindset</h2>
+    </div>
+    <div class="team-grid reveal">
+      <div class="team-card"><div class="team-avatar">R</div><h4 style="font-size:15px;">Rhea Kapoor</h4><p class="text-muted" style="font-size:12.5px; margin-top:4px;">Founder & Backend Lead</p></div>
+      <div class="team-card"><div class="team-avatar">K</div><h4 style="font-size:15px;">Karan Bhatt</h4><p class="text-muted" style="font-size:12.5px; margin-top:4px;">Cloud Infrastructure</p></div>
+      <div class="team-card"><div class="team-avatar">M</div><h4 style="font-size:15px;">Meera Joshi</h4><p class="text-muted" style="font-size:12.5px; margin-top:4px;">Product Design</p></div>
+      <div class="team-card"><div class="team-avatar">S</div><h4 style="font-size:15px;">Sahil Verma</h4><p class="text-muted" style="font-size:12.5px; margin-top:4px;">Operator Partnerships</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" style="background:var(--white);">
+  <div class="container">
+    <div class="contact-cta reveal">
+      <div><h2>Want to bring your fleet onto SwiftRide Cloud?</h2><p>Join 200+ operators already running their routes through our platform.</p></div>
+      <a href="register.html" class="btn btn-ghost-navy">Become a Partner <i class="fa-solid fa-arrow-right"></i></a>
+    </div>
+  </div>
+</section>
+
+<div id="sr-footer-mount"></div>
+
+<script src="js/data.js"></script>
+<script src="js/layout.js"></script>
+<script src="js/app.js"></script>
+<script>
+  srRenderNavbar("about");
+  srRenderFooter();
+</script>
+</body>
+</html>

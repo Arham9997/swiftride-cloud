@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Payment Monitoring — SwiftRide Cloud Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/dashboard.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+
+<div class="dash-shell">
+  <div id="sr-dash-sidebar-mount"></div>
+
+  <main class="dash-main">
+    <div class="dash-topbar"><div><h1>Payment Monitoring</h1><div class="sub">Gateway health and transaction oversight.</div></div></div>
+
+    <div class="stat-grid">
+      <div class="stat-card"><div class="top"><div class="icon" style="background:rgba(31,170,89,0.1); color:var(--success);"><i class="fa-solid fa-circle-check"></i></div></div><div class="val">96.2%</div><div class="label">Success Rate (24h)</div></div>
+      <div class="stat-card"><div class="top"><div class="icon" style="background:rgba(226,72,58,0.1); color:var(--danger);"><i class="fa-solid fa-circle-xmark"></i></div></div><div class="val">3.8%</div><div class="label">Failed Transactions</div></div>
+      <div class="stat-card"><div class="top"><div class="icon" style="background:rgba(255,138,0,0.1); color:var(--orange-500);"><i class="fa-solid fa-rotate-left"></i></div></div><div class="val">142</div><div class="label">Refunds Processed Today</div></div>
+      <div class="stat-card"><div class="top"><div class="icon" style="background:rgba(11,31,58,0.08); color:var(--navy-900);"><i class="fa-solid fa-clock"></i></div></div><div class="val">1.2s</div><div class="label">Avg. Gateway Response</div></div>
+    </div>
+
+    <div class="dash-panel">
+      <div class="panel-head"><h3><i class="fa-solid fa-chart-line text-orange"></i> Transaction Volume (24h)</h3></div>
+      <canvas id="txnChart" height="100"></canvas>
+    </div>
+
+    <div class="dash-panel">
+      <div class="panel-head"><h3><i class="fa-solid fa-triangle-exclamation text-orange"></i> Flagged for Review</h3></div>
+      <div class="table-wrap">
+        <table class="dash-table">
+          <thead><tr><th>Booking ID</th><th>Amount</th><th>Gateway</th><th>Reason</th><th>Action</th></tr></thead>
+          <tbody id="flaggedBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/layout.js"></script>
+<script src="js/app.js"></script>
+<script>
+  const session = srRequireAuth();
+  if (session) {
+    srRenderDashSidebar("admin", "payments");
+
+    new Chart(document.getElementById("txnChart"), {
+      type: 'bar',
+      data: {
+        labels: Array.from({length:24}, (_,i) => `${i}:00`),
+        datasets: [{ label: 'Transactions', data: Array.from({length:24}, () => Math.floor(80 + Math.random()*220)), backgroundColor: '#4FC3F7', borderRadius: 4 }]
+      },
+      options: { plugins: { legend: { display: false } } }
+    });
+
+    let flagged = [
+      { id: "SRC88417220", amount: 1450, gateway: "Razorpay", reason: "Multiple failed retries" },
+      { id: "SRC88416810", amount: 890, gateway: "PayU", reason: "Refund disputed by user" },
+      { id: "SRC88415004", amount: 2100, gateway: "Razorpay", reason: "Unusual transaction velocity" },
+    ];
+
+    function render() {
+      document.getElementById("flaggedBody").innerHTML = flagged.map((f,i) => `
+        <tr>
+          <td class="mono">${f.id}</td><td class="mono">${srFormatCurrency(f.amount)}</td><td>${f.gateway}</td><td>${f.reason}</td>
+          <td><button class="btn btn-outline btn-sm" data-clear="${i}">Mark Reviewed</button></td>
+        </tr>`).join("") || `<tr><td colspan="5" style="text-align:center; padding:24px; color:var(--ink-500);">No flagged transactions</td></tr>`;
+
+      document.querySelectorAll("[data-clear]").forEach(btn => btn.addEventListener("click", () => {
+        flagged.splice(parseInt(btn.dataset.clear,10),1);
+        render();
+        srToast("Transaction marked as reviewed", "success");
+      }));
+    }
+    render();
+  }
+</script>
+</body>
+</html>

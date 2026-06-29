@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Payment Failed — SwiftRide Cloud</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/payment.css">
+</head>
+<body>
+
+<div id="sr-navbar-mount"></div>
+
+<div class="result-wrap">
+  <div class="result-card">
+    <div class="result-icon failure"><i class="fa-solid fa-xmark"></i></div>
+    <h1>Payment Failed</h1>
+    <p class="desc">We couldn't process your payment. Your seats are still held for a few minutes — you can try again before they're released.</p>
+    <div style="background:var(--ink-100); border-radius:var(--r-md); padding:14px; margin-top:22px; text-align:left; font-size:13px;">
+      <div class="flex-between"><span class="text-muted">Reference ID</span><span class="mono" id="refId">—</span></div>
+      <div class="flex-between" style="margin-top:8px;"><span class="text-muted">Reason</span><span>Bank declined the transaction</span></div>
+    </div>
+    <div class="flex-center" style="gap:12px; margin-top:26px; flex-wrap:wrap;">
+      <a href="payment.html" class="btn btn-primary">Try Again <i class="fa-solid fa-rotate-right"></i></a>
+      <a href="search.html" class="btn btn-outline">Back to Search</a>
+    </div>
+  </div>
+</div>
+
+<div id="sr-footer-mount"></div>
+
+<script src="js/data.js"></script>
+<script src="js/layout.js"></script>
+<script src="js/app.js"></script>
+<script>
+  srRenderNavbar("", true);
+  srRenderFooter();
+  const booking = JSON.parse(sessionStorage.getItem("sr_last_booking") || "null");
+  document.getElementById("refId").textContent = booking ? booking.id : "—";
+</script>
+</body>
+</html>

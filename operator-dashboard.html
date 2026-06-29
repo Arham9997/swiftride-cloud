@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Operator Dashboard — SwiftRide Cloud</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/dashboard.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+
+<div class="dash-shell">
+  <div id="sr-dash-sidebar-mount"></div>
+
+  <main class="dash-main">
+    <div class="dash-topbar">
+      <div><h1>Operator Dashboard</h1><div class="sub">Fleet, routes, and revenue overview.</div></div>
+      <a href="operator-buses.html" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add Bus</a>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="top"><div class="icon" style="background:rgba(255,138,0,0.1); color:var(--orange-500);"><i class="fa-solid fa-bus"></i></div></div>
+        <div class="val">18</div><div class="label">Active Buses</div>
+        <div class="trend up"><i class="fa-solid fa-arrow-up"></i> 2 new this month</div>
+      </div>
+      <div class="stat-card">
+        <div class="top"><div class="icon" style="background:rgba(79,195,247,0.15); color:#1B82AC;"><i class="fa-solid fa-route"></i></div></div>
+        <div class="val">24</div><div class="label">Routes Operated</div>
+        <div class="trend up"><i class="fa-solid fa-arrow-up"></i> 3 added this month</div>
+      </div>
+      <div class="stat-card">
+        <div class="top"><div class="icon" style="background:rgba(31,170,89,0.1); color:var(--success);"><i class="fa-solid fa-ticket"></i></div></div>
+        <div class="val">1,284</div><div class="label">Bookings This Month</div>
+        <div class="trend up"><i class="fa-solid fa-arrow-up"></i> 12.4% vs last month</div>
+      </div>
+      <div class="stat-card">
+        <div class="top"><div class="icon" style="background:rgba(11,31,58,0.08); color:var(--navy-900);"><i class="fa-solid fa-indian-rupee-sign"></i></div></div>
+        <div class="val">₹9.4L</div><div class="label">Revenue This Month</div>
+        <div class="trend up"><i class="fa-solid fa-arrow-up"></i> 8.1% vs last month</div>
+      </div>
+    </div>
+
+    <div class="grid" style="grid-template-columns: 1.4fr 1fr; gap:24px; align-items:start;">
+      <div class="dash-panel">
+        <div class="panel-head"><h3><i class="fa-solid fa-chart-line text-orange"></i> Revenue, Last 7 Days</h3></div>
+        <canvas id="revenueChart" height="220"></canvas>
+      </div>
+      <div class="dash-panel">
+        <div class="panel-head"><h3><i class="fa-solid fa-chart-pie text-orange"></i> Bookings by Bus Type</h3></div>
+        <canvas id="busTypeChart" height="220"></canvas>
+      </div>
+    </div>
+
+    <div class="dash-panel">
+      <div class="panel-head"><h3><i class="fa-solid fa-ticket text-orange"></i> Recent Bookings</h3><a href="operator-bookings.html" class="field-link">View all</a></div>
+      <div class="table-wrap">
+        <table class="dash-table">
+          <thead><tr><th>Booking ID</th><th>Route</th><th>Passenger</th><th>Seats</th><th>Amount</th><th>Status</th></tr></thead>
+          <tbody id="bookingsBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/layout.js"></script>
+<script src="js/app.js"></script>
+<script>
+  const session = srRequireAuth();
+  if (session) {
+    srRenderDashSidebar("operator", "dashboard");
+
+    new Chart(document.getElementById("revenueChart"), {
+      type: 'line',
+      data: {
+        labels: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+        datasets: [{
+          label: 'Revenue (₹)',
+          data: [42000, 38500, 51000, 47200, 60500, 72000, 65800],
+          borderColor: '#FF8A00',
+          backgroundColor: 'rgba(255,138,0,0.1)',
+          tension: 0.4, fill: true, pointBackgroundColor: '#FF8A00', pointRadius: 4
+        }]
+      },
+      options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+    });
+
+    new Chart(document.getElementById("busTypeChart"), {
+      type: 'doughnut',
+      data: {
+        labels: ['AC Sleeper', 'Non-AC Seater', 'AC Seater', 'Volvo'],
+        datasets: [{ data: [38, 22, 28, 12], backgroundColor: ['#0B1F3A','#FF8A00','#4FC3F7','#1FAA59'] }]
+      },
+      options: { plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11.5 } } } } }
+    });
+
+    const sampleBookings = [
+      { id: "SRC88421019", route: "Mumbai → Pune", pax: "Aarav Mehta", seats: "A4", amount: 890, status: "confirmed" },
+      { id: "SRC88420877", route: "Mumbai → Pune", pax: "Sneha Iyer", seats: "B2, B3", amount: 1640, status: "confirmed" },
+      { id: "SRC88419502", route: "Pune → Mumbai", pax: "Rohan Kulkarni", seats: "C1", amount: 720, status: "cancelled" },
+      { id: "SRC88418311", route: "Mumbai → Pune", pax: "Priya Nair", seats: "A1", amount: 890, status: "confirmed" },
+    ];
+    document.getElementById("bookingsBody").innerHTML = sampleBookings.map(b => `
+      <tr>
+        <td class="mono">${b.id}</td><td>${b.route}</td><td>${b.pax}</td><td class="mono">${b.seats}</td>
+        <td class="mono">${srFormatCurrency(b.amount)}</td>
+        <td><span class="badge ${b.status === 'confirmed' ? 'badge-success' : 'badge-danger'}">${b.status}</span></td>
+      </tr>`).join("");
+  }
+</script>
+</body>
+</html>

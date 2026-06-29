@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notifications — SwiftRide Cloud</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+
+<div class="dash-shell">
+  <div id="sr-dash-sidebar-mount"></div>
+
+  <main class="dash-main">
+    <div class="dash-topbar">
+      <div><h1>Notifications</h1><div class="sub">Trip alerts, payment receipts, and offers.</div></div>
+      <button class="btn btn-outline" id="markAllBtn">Mark all as read</button>
+    </div>
+
+    <div class="dash-panel" id="notifPanel"></div>
+  </main>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/layout.js"></script>
+<script src="js/app.js"></script>
+<script>
+  const session = srRequireAuth();
+  if (session) {
+    srRenderDashSidebar(session.role === 'admin' ? 'admin' : session.role === 'operator' ? 'operator' : 'passenger', "notifications");
+
+    const notifs = [
+      { icon: "fa-bus", color: "orange", title: "Your bus departs in 3 hours", desc: "Mumbai → Pune, boarding at Central Bus Stand, 21:30.", time: "2 hours ago", unread: true },
+      { icon: "fa-circle-check", color: "success", title: "Payment successful", desc: "₹890 paid for booking SRC88421019. Ticket sent to your email.", time: "1 day ago", unread: true },
+      { icon: "fa-location-dot", color: "sky", title: "Boarding point updated", desc: "Operator moved your boarding point 200m due to road work.", time: "2 days ago", unread: false },
+      { icon: "fa-gift", color: "orange", title: "You earned 50 reward points", desc: "For completing your trip from Bengaluru to Chennai.", time: "5 days ago", unread: false },
+      { icon: "fa-rotate-left", color: "navy", title: "Refund processed", desc: "₹450 refunded to your wallet for a cancelled booking.", time: "1 week ago", unread: false },
+      { icon: "fa-triangle-exclamation", color: "danger", title: "Schedule change", desc: "Your bus departure shifted by 20 minutes due to traffic conditions.", time: "1 week ago", unread: false },
+    ];
+
+    const colorMap = { orange: ["rgba(255,138,0,0.12)","var(--orange-500)"], success: ["rgba(31,170,89,0.12)","var(--success)"], sky: ["rgba(79,195,247,0.15)","#1B82AC"], navy: ["rgba(11,31,58,0.08)","var(--navy-900)"], danger: ["rgba(226,72,58,0.12)","var(--danger)"] };
+    const NOTIF_STORAGE_KEY = "srNotificationsState";
+
+    function loadNotifState() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(NOTIF_STORAGE_KEY) || "null");
+        return Array.isArray(saved) ? saved : null;
+      } catch {
+        return null;
+      }
+    }
+
+    function saveNotifState() {
+      try {
+        localStorage.setItem(NOTIF_STORAGE_KEY, JSON.stringify(notifs.map(n => n.unread)));
+      } catch {
+        // Ignore storage errors in browsers with blocked LocalStorage
+      }
+    }
+
+    function applySavedState() {
+      const savedState = loadNotifState();
+      if (!savedState) return;
+      notifs.forEach((n, index) => {
+        if (typeof savedState[index] === "boolean") {
+          n.unread = savedState[index];
+        }
+      });
+    }
+
+    function render() {
+      document.getElementById("notifPanel").innerHTML = notifs.map((n,i) => `
+        <div class="notif-row" style="${n.unread ? 'background:var(--bg-soft); margin:0 -24px; padding:14px 24px;' : ''}">
+          <div class="ic" style="background:${colorMap[n.color][0]}; color:${colorMap[n.color][1]};"><i class="fa-solid ${n.icon}"></i></div>
+          <div style="flex:1;">
+            <div class="flex-between">
+              <div style="font-weight:700; font-size:14px; color:var(--ink-900);">${n.title}</div>
+              ${n.unread ? '<span style="width:8px; height:8px; border-radius:50%; background:var(--orange-500); flex-shrink:0;"></span>' : ''}
+            </div>
+            <div class="text-muted" style="font-size:13px; margin-top:3px;">${n.desc}</div>
+            <div class="text-muted" style="font-size:11.5px; margin-top:6px;">${n.time}</div>
+          </div>
+        </div>`).join("");
+    }
+
+    applySavedState();
+    render();
+
+    document.getElementById("markAllBtn").addEventListener("click", () => {
+      notifs.forEach(n => n.unread = false);
+      saveNotifState();
+      render();
+      srToast("All notifications marked as read", "success");
+    });
+  }
+</script>
+</body>
+</html>

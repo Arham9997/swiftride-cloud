@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bus Management — SwiftRide Cloud Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+
+<div class="dash-shell">
+  <div id="sr-dash-sidebar-mount"></div>
+
+  <main class="dash-main">
+    <div class="dash-topbar"><div><h1>Bus Management</h1><div class="sub">All buses registered across operator partners.</div></div></div>
+
+    <div class="dash-panel">
+      <div class="table-wrap">
+        <table class="dash-table">
+          <thead><tr><th>Bus Number</th><th>Operator</th><th>Type</th><th>Seats</th><th>Status</th><th>Last Inspection</th></tr></thead>
+          <tbody id="busesBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/layout.js"></script>
+<script src="js/app.js"></script>
+<script>
+  const session = srRequireAuth();
+  if (session) {
+    srRenderDashSidebar("admin", "buses");
+
+    const buses = [
+      { num: "MH-12-AB-3456", op: "SwiftRide Express", type: "AC Sleeper", seats: 30, status: "Active", inspected: "May 28, 2026" },
+      { num: "MH-14-CD-7821", op: "Orange Line Travels", type: "Non-AC Seater", seats: 40, status: "Active", inspected: "Jun 02, 2026" },
+      { num: "KA-05-EF-1190", op: "NavyArc Coaches", type: "Volvo Multi-Axle", seats: 36, status: "Maintenance", inspected: "Apr 14, 2026" },
+      { num: "DL-08-GH-5543", op: "SkyHop Volvo", type: "AC Seater", seats: 40, status: "Active", inspected: "Jun 10, 2026" },
+      { num: "TN-07-JK-9912", op: "MetroLink Buses", type: "Electric AC", seats: 32, status: "Active", inspected: "Jun 18, 2026" },
+    ];
+    document.getElementById("busesBody").innerHTML = buses.map(b => `
+      <tr>
+        <td class="mono">${b.num}</td><td>${b.op}</td><td>${b.type}</td><td>${b.seats}</td>
+        <td><span class="badge ${b.status === 'Active' ? 'badge-success' : 'badge-danger'}">${b.status}</span></td>
+        <td>${b.inspected}</td>
+      </tr>`).join("");
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+/* ===========================================================
+   SwiftRide Cloud — Dashboard Shell Styles
+   =========================================================== */
+
+.dash-shell { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; padding-top: 0; }
+@media (max-width: 920px) { .dash-shell { grid-template-columns: 1fr; } }
+
+.dash-sidebar {
+  background: var(--navy-900); color: white; padding: 26px 18px;
+  position: sticky; top: 0; height: 100vh; overflow-y: auto;
+  display: flex; flex-direction: column;
+}
+@media (max-width: 920px) { .dash-sidebar { display: none; } }
+.dash-sidebar .brand { color: white; padding: 0 10px 26px; }
+.dash-sidebar .brand .brand-text { color: white; }
+.dash-sidebar .brand .brand-text span { color: var(--orange-400); }
+
+.dash-nav { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+.dash-nav-section { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: rgba(255,255,255,0.4); padding: 16px 14px 8px; }
+.dash-nav a {
+  display: flex; align-items: center; gap: 12px; padding: 11px 14px; border-radius: var(--r-sm);
+  font-size: 13.5px; font-weight: 600; color: rgba(255,255,255,0.7); transition: all .2s;
+}
+.dash-nav a i { width: 18px; text-align: center; }
+.dash-nav a:hover { background: rgba(255,255,255,0.06); color: white; }
+.dash-nav a.active { background: var(--orange-500); color: white; }
+
+.dash-main { padding: 28px 32px 60px; min-width: 0; }
+@media (max-width: 600px) { .dash-main { padding: 20px 16px 50px; } }
+
+.dash-topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; flex-wrap: wrap; gap: 14px; }
+.dash-topbar h1 { font-size: 24px; }
+.dash-topbar .sub { color: var(--ink-500); font-size: 13.5px; margin-top: 4px; }
+
+.mobile-dash-nav { display: none; gap: 8px; overflow-x: auto; padding: 16px 16px 0; }
+@media (max-width: 920px) { .mobile-dash-nav { display: flex; } }
+.mobile-dash-nav a { white-space: nowrap; padding: 9px 16px; border-radius: var(--r-pill); background: var(--ink-100); font-size: 13px; font-weight: 600; color: var(--ink-700); }
+.mobile-dash-nav a.active { background: var(--navy-900); color: white; }
+
+.stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 28px; }
+@media (max-width: 980px) { .stat-grid { grid-template-columns: repeat(2,1fr); } }
+@media (max-width: 560px) { .stat-grid { grid-template-columns: 1fr; } }
+.stat-card { background: white; border-radius: var(--r-lg); border: 1px solid var(--ink-100); padding: 22px; }
+.stat-card .top { display: flex; justify-content: space-between; align-items: flex-start; }
+.stat-card .icon { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 17px; }
+.stat-card .val { font-family: var(--font-mono); font-size: 26px; font-weight: 700; color: var(--navy-900); margin-top: 14px; }
+.stat-card .label { font-size: 12.5px; color: var(--ink-500); margin-top: 4px; }
+.stat-card .trend { font-size: 12px; font-weight: 700; margin-top: 10px; display: flex; align-items: center; gap: 4px; }
+.trend.up { color: var(--success); }
+.trend.down { color: var(--danger); }
+
+.dash-panel { background: var(--white); border-radius: var(--r-lg); border: 1px solid var(--ink-100); padding: 24px; margin-bottom: 24px; }
+.dash-panel .panel-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+.dash-panel .panel-head h3 { font-size: 16px; }
+
+.trip-row { display: grid; grid-template-columns: auto 1.4fr 1fr auto auto; gap: 16px; align-items: center; padding: 16px 0; border-bottom: 1px solid var(--ink-100); }
+.trip-row:last-child { border-bottom: none; }
+.trip-row .route-txt { font-weight: 700; font-size: 14.5px; color: var(--ink-900); }
+.trip-row .meta-txt { font-size: 12px; color: var(--ink-500); margin-top: 3px; }
+@media (max-width: 700px) { .trip-row { grid-template-columns: 1fr; gap: 8px; } }
+.trip-row .trip-icon { width: 42px; height: 42px; border-radius: 12px; background: rgba(255,138,0,0.1); color: var(--orange-500); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+
+.dash-table { width: 100%; border-collapse: collapse; }
+.dash-table th { text-align: left; font-size: 11.5px; text-transform: uppercase; letter-spacing: .04em; color: var(--ink-500); padding: 10px 14px; border-bottom: 2px solid var(--ink-100); }
+.dash-table td { padding: 14px 14px; font-size: 13.5px; border-bottom: 1px solid var(--ink-100); color: var(--ink-700); }
+.dash-table tr:hover td { background: var(--bg-soft); }
+.table-wrap { overflow-x: auto; }
+
+.profile-header { display: flex; align-items: center; gap: 20px; padding: 24px; background: linear-gradient(135deg, var(--navy-900), var(--navy-700)); border-radius: var(--r-lg); color: white; margin-bottom: 24px; }
+.profile-avatar-lg { width: 76px; height: 76px; border-radius: 50%; background: linear-gradient(135deg, var(--orange-500), var(--sky-400)); display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 700; flex-shrink: 0; }
+
+.support-ticket-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--ink-100); }
+.support-ticket-row:last-child { border-bottom: none; }
+
+.notif-row { display: flex; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--ink-100); }
+.notif-row:last-child { border-bottom: none; }
+.notif-row .ic { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 14px; }
+
+.wallet-card-visual { background: linear-gradient(135deg, var(--orange-500), var(--orange-600)); border-radius: var(--r-lg); padding: 26px; color: white; position: relative; overflow: hidden; }
+.wallet-card-visual::before { content:''; position:absolute; top:-50px; right:-30px; width:160px; height:160px; background: radial-gradient(circle, rgba(255,255,255,0.2), transparent 70%); }
+
+.reward-tier-bar { height: 10px; background: var(--ink-100); border-radius: var(--r-pill); overflow: hidden; margin: 14px 0; }
+.reward-tier-bar .fill { height: 100%; background: linear-gradient(90deg, var(--orange-500), var(--sky-400)); border-radius: var(--r-pill); }

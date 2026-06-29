@@ -1,0 +1,71 @@
+/* ===========================================================
+   SwiftRide Cloud — Payment Page Styles
+   =========================================================== */
+
+.payment-page-wrap { padding: 130px 0 80px; }
+.payment-layout { display: grid; grid-template-columns: 1fr 380px; gap: 28px; align-items: start; }
+@media (max-width: 920px) { .payment-layout { grid-template-columns: 1fr; } }
+
+.pay-methods-card, .pay-summary-card { background: white; border-radius: var(--r-lg); border: 1px solid var(--ink-100); padding: 28px; }
+.pay-summary-card { position: sticky; top: 100px; }
+
+.method-tabs { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 26px; }
+@media (max-width: 640px) { .method-tabs { grid-template-columns: repeat(3, 1fr); } }
+.method-tab {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  padding: 14px 8px; border-radius: var(--r-md); border: 1.5px solid var(--ink-300);
+  background: white; cursor: pointer; transition: all .2s; font-size: 12px; font-weight: 600; color: var(--ink-700);
+}
+.method-tab i { font-size: 18px; color: var(--ink-500); }
+.method-tab.active { border-color: var(--orange-500); background: rgba(255,138,0,0.06); color: var(--orange-600); }
+.method-tab.active i { color: var(--orange-500); }
+
+.method-panel { display: none; }
+.method-panel.show { display: block; animation: toastIn .3s var(--ease-out); }
+
+.card-visual {
+  background: linear-gradient(135deg, var(--navy-900), var(--navy-700));
+  border-radius: var(--r-lg); padding: 24px; color: white; margin-bottom: 22px;
+  position: relative; overflow: hidden; min-height: 150px;
+}
+.card-visual::before { content:''; position:absolute; top:-40px; right:-40px; width:140px; height:140px; background: radial-gradient(circle, rgba(255,138,0,0.3), transparent 70%); }
+.card-visual .chip { width: 38px; height: 28px; background: linear-gradient(135deg, var(--sky-300), var(--sky-400)); border-radius: 6px; margin-bottom: 24px; }
+.card-visual .num { font-family: var(--font-mono); font-size: 18px; letter-spacing: 2px; margin-bottom: 18px; }
+.card-visual .meta { display: flex; justify-content: space-between; font-size: 11px; opacity: .8; font-family: var(--font-mono); }
+
+.upi-apps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 18px; }
+.upi-app { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 16px; border-radius: var(--r-md); border: 1.5px solid var(--ink-300); cursor: pointer; transition: all .2s; }
+.upi-app.active { border-color: var(--orange-500); background: rgba(255,138,0,0.06); }
+.upi-app i { font-size: 22px; color: var(--ink-700); }
+.upi-app span { font-size: 12px; font-weight: 600; }
+
+.qr-box { display: flex; flex-direction: column; align-items: center; padding: 24px; background: var(--ink-100); border-radius: var(--r-lg); }
+.qr-box .qr-frame { width: 180px; height: 180px; background: white; border-radius: 14px; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-sm); }
+
+.bank-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.bank-item { padding: 14px; border-radius: var(--r-md); border: 1.5px solid var(--ink-300); text-align: center; font-size: 13px; font-weight: 600; cursor: pointer; transition: all .2s; }
+.bank-item.active { border-color: var(--orange-500); background: rgba(255,138,0,0.06); color: var(--orange-600); }
+
+.wallet-list { display: flex; flex-direction: column; gap: 10px; }
+.wallet-item { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; border: 1.5px solid var(--ink-300); border-radius: var(--r-md); cursor: pointer; transition: all .2s; }
+.wallet-item.active { border-color: var(--orange-500); background: rgba(255,138,0,0.06); }
+.wallet-item .bal { font-family: var(--font-mono); font-size: 12.5px; color: var(--ink-500); }
+
+.summary-trip-card { background: var(--ink-100); border-radius: var(--r-md); padding: 16px; margin-bottom: 18px; }
+.summary-trip-card .route { display: flex; justify-content: space-between; font-weight: 700; font-size: 14.5px; color: var(--navy-900); }
+.summary-trip-card .meta { font-size: 12px; color: var(--ink-500); margin-top: 6px; }
+
+/* Result pages (success/failure) */
+.result-wrap { min-height: 80vh; display: flex; align-items: center; justify-content: center; padding: 130px 24px 60px; }
+.result-card { max-width: 520px; width: 100%; background: white; border-radius: var(--r-xl); padding: 48px 36px; text-align: center; box-shadow: var(--shadow-lg); }
+.result-icon { width: 90px; height: 90px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 38px; margin: 0 auto 24px; animation: popIn .5s var(--ease-spring); }
+.result-icon.success { background: rgba(31,170,89,0.12); color: var(--success); }
+.result-icon.failure { background: rgba(226,72,58,0.12); color: var(--danger); }
+@keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
+.result-card h1 { font-size: 24px; }
+.result-card p.desc { color: var(--ink-500); margin-top: 10px; font-size: 14.5px; line-height: 1.6; }
+
+/* Ticket / invoice */
+.invoice-card { max-width: 480px; margin: 0 auto; }
+.qr-stub { display: flex; justify-content: center; padding: 20px; background: var(--ink-100); }
+.qr-stub .qr-frame { width: 130px; height: 130px; background: white; border-radius: 12px; display:flex; align-items:center; justify-content:center; }

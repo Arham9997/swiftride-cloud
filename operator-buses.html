@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manage Buses — SwiftRide Cloud</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+
+<div class="dash-shell">
+  <div id="sr-dash-sidebar-mount"></div>
+
+  <main class="dash-main">
+    <div class="dash-topbar">
+      <div><h1>Manage Buses</h1><div class="sub">Your fleet, seat configurations, and fares.</div></div>
+      <button class="btn btn-primary" id="addBusBtn"><i class="fa-solid fa-plus"></i> Add Bus</button>
+    </div>
+
+    <div class="dash-panel" id="addBusForm" style="display:none;">
+      <h3 style="font-size:16px; margin-bottom:18px;">Add a new bus</h3>
+      <form id="busForm">
+        <div class="grid" style="grid-template-columns: 1fr 1fr 1fr;">
+          <div class="field"><label>Bus Number</label><input class="input" id="bNumber" placeholder="MH-12-AB-3456" required></div>
+          <div class="field"><label>Bus Type</label>
+            <select class="input" id="bType"><option>AC Sleeper</option><option>Non-AC Seater</option><option>AC Seater</option><option>Volvo Multi-Axle</option><option>Electric AC</option></select>
+          </div>
+          <div class="field"><label>Total Seats</label><input type="number" class="input" id="bSeats" value="40" required></div>
+          <div class="field"><label>Base Fare (₹)</label><input type="number" class="input" id="bFare" value="650" required></div>
+          <div class="field"><label>Amenities</label><input class="input" id="bAmenities" placeholder="WiFi, Charging Point, Water Bottle"></div>
+          <div class="field"><label>Status</label><select class="input" id="bStatus"><option>Active</option><option>Maintenance</option></select></div>
+        </div>
+        <button type="submit" class="btn btn-primary">Save Bus</button>
+      </form>
+    </div>
+
+    <div class="dash-panel">
+      <div class="table-wrap">
+        <table class="dash-table">
+          <thead><tr><th>Bus Number</th><th>Type</th><th>Total Seats</th><th>Base Fare</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="busesBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/layout.js"></script>
+<script src="js/app.js"></script>
+<script>
+  const session = srRequireAuth();
+  if (session) {
+    srRenderDashSidebar("operator", "buses");
+
+    let buses = JSON.parse(localStorage.getItem("sr_operator_buses") || "null") || [
+      { number: "MH-12-AB-3456", type: "AC Sleeper", seats: 30, fare: 890, status: "Active" },
+      { number: "MH-14-CD-7821", type: "Non-AC Seater", seats: 40, fare: 420, status: "Active" },
+      { number: "MH-12-EF-1190", type: "Volvo Multi-Axle", seats: 36, fare: 1150, status: "Active" },
+      { number: "MH-14-GH-5543", type: "AC Seater", seats: 40, fare: 680, status: "Maintenance" },
+    ];
+
+    function save() { localStorage.setItem("sr_operator_buses", JSON.stringify(buses)); }
+
+    function render() {
+      document.getElementById("busesBody").innerHTML = buses.map((b,i) => `
+        <tr>
+          <td class="mono">${b.number}</td><td>${b.type}</td><td>${b.seats}</td>
+          <td class="mono">${srFormatCurrency(b.fare)}</td>
+          <td><span class="badge ${b.status === 'Active' ? 'badge-success' : 'badge-danger'}">${b.status}</span></td>
+          <td>
+            <button class="btn btn-outline btn-sm toggle-btn" data-i="${i}">${b.status === 'Active' ? 'Set Maintenance' : 'Set Active'}</button>
+            <button class="btn btn-sm" style="background:rgba(226,72,58,0.1); color:var(--danger);" data-del="${i}">Remove</button>
+          </td>
+        </tr>`).join("");
+
+      document.querySelectorAll(".toggle-btn").forEach(btn => btn.addEventListener("click", () => {
+        const i = parseInt(btn.dataset.i,10);
+        buses[i].status = buses[i].status === "Active" ? "Maintenance" : "Active";
+        save(); render();
+        srToast(`Bus ${buses[i].number} marked ${buses[i].status}`, "info");
+      }));
+      document.querySelectorAll("[data-del]").forEach(btn => btn.addEventListener("click", () => {
+        const i = parseInt(btn.dataset.del,10);
+        const removed = buses[i].number;
+        buses.splice(i,1); save(); render();
+        srToast(`Removed bus ${removed}`, "success");
+      }));
+    }
+    render();
+
+    document.getElementById("addBusBtn").addEventListener("click", () => {
+      const form = document.getElementById("addBusForm");
+      form.style.display = form.style.display === "none" ? "block" : "none";
+    });
+
+    document.getElementById("busForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      buses.unshift({
+        number: document.getElementById("bNumber").value,
+        type: document.getElementById("bType").value,
+        seats: parseInt(document.getElementById("bSeats").value,10),
+        fare: parseInt(document.getElementById("bFare").value,10),
+        status: document.getElementById("bStatus").value
+      });
+      save(); render();
+      e.target.reset();
+      document.getElementById("addBusForm").style.display = "none";
+      srToast("Bus added to your fleet", "success");
+    });
+  }
+</script>
+</body>
+</html>

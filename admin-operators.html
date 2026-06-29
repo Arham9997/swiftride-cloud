@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Operator Management — SwiftRide Cloud Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+
+<div class="dash-shell">
+  <div id="sr-dash-sidebar-mount"></div>
+
+  <main class="dash-main">
+    <div class="dash-topbar"><div><h1>Operator Management</h1><div class="sub">Partner operators and their fleet performance.</div></div></div>
+
+    <div class="grid" style="grid-template-columns: repeat(3, 1fr); gap:20px;">
+      <div class="dash-panel" style="margin-bottom:0;">
+        <div class="flex-between"><h3 style="font-size:15px;">SwiftRide Express</h3><span class="badge badge-success">Verified</span></div>
+        <div class="text-muted" style="font-size:13px; margin-top:10px;">42 buses · 18 routes</div>
+        <div class="flex-between" style="margin-top:14px;"><span class="text-muted" style="font-size:12.5px;">This month's revenue</span><span class="mono" style="font-weight:700;">₹62.4L</span></div>
+      </div>
+      <div class="dash-panel" style="margin-bottom:0;">
+        <div class="flex-between"><h3 style="font-size:15px;">Orange Line Travels</h3><span class="badge badge-success">Verified</span></div>
+        <div class="text-muted" style="font-size:13px; margin-top:10px;">35 buses · 14 routes</div>
+        <div class="flex-between" style="margin-top:14px;"><span class="text-muted" style="font-size:12.5px;">This month's revenue</span><span class="mono" style="font-weight:700;">₹48.1L</span></div>
+      </div>
+      <div class="dash-panel" style="margin-bottom:0;">
+        <div class="flex-between"><h3 style="font-size:15px;">NavyArc Coaches</h3><span class="badge badge-orange">Pending Review</span></div>
+        <div class="text-muted" style="font-size:13px; margin-top:10px;">12 buses · 6 routes</div>
+        <div class="flex-between" style="margin-top:14px;"><span class="text-muted" style="font-size:12.5px;">This month's revenue</span><span class="mono" style="font-weight:700;">₹14.8L</span></div>
+      </div>
+    </div>
+
+    <div class="dash-panel" style="margin-top:24px;">
+      <div class="table-wrap">
+        <table class="dash-table">
+          <thead><tr><th>Operator</th><th>Buses</th><th>Routes</th><th>Rating</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="opBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/layout.js"></script>
+<script src="js/app.js"></script>
+<script>
+  const session = srRequireAuth();
+  if (session) {
+    srRenderDashSidebar("admin", "operators");
+
+    let ops = [
+      { name: "SwiftRide Express", buses: 42, routes: 18, rating: 4.6, status: "approved" },
+      { name: "Orange Line Travels", buses: 35, routes: 14, rating: 4.4, status: "approved" },
+      { name: "NavyArc Coaches", buses: 12, routes: 6, rating: 4.1, status: "pending" },
+      { name: "SkyHop Volvo", buses: 28, routes: 11, rating: 4.7, status: "approved" },
+      { name: "MetroLink Buses", buses: 19, routes: 9, rating: 3.9, status: "approved" },
+      { name: "CloudCruiser Travels", buses: 8, routes: 4, rating: 4.0, status: "pending" },
+    ];
+
+    function render() {
+      document.getElementById("opBody").innerHTML = ops.map((o,i) => `
+        <tr>
+          <td style="font-weight:700;">${o.name}</td><td>${o.buses}</td><td>${o.routes}</td>
+          <td><i class="fa-solid fa-star" style="color:var(--orange-500);"></i> ${o.rating}</td>
+          <td><span class="badge ${o.status === 'approved' ? 'badge-success' : 'badge-orange'}">${o.status === 'approved' ? 'Approved' : 'Pending Review'}</span></td>
+          <td>${o.status === 'pending' ? `<button class="btn btn-primary btn-sm" data-approve="${i}">Approve</button>` : `<button class="btn btn-outline btn-sm">View Details</button>`}</td>
+        </tr>`).join("");
+
+      document.querySelectorAll("[data-approve]").forEach(btn => btn.addEventListener("click", () => {
+        const i = parseInt(btn.dataset.approve,10);
+        ops[i].status = "approved";
+        render();
+        srToast(`${ops[i].name} approved as a partner operator`, "success");
+      }));
+    }
+    render();
+  }
+</script>
+</body>
+</html>

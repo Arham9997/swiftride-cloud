@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analytics — SwiftRide Cloud Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/dashboard.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+
+<div class="dash-shell">
+  <div id="sr-dash-sidebar-mount"></div>
+
+  <main class="dash-main">
+    <div class="dash-topbar"><div><h1>Analytics</h1><div class="sub">Cross-platform trends and engagement.</div></div></div>
+
+    <div class="grid" style="grid-template-columns: 1fr 1fr; gap:24px;">
+      <div class="dash-panel">
+        <div class="panel-head"><h3><i class="fa-solid fa-map-location-dot text-orange"></i> Top Cities by Bookings</h3></div>
+        <canvas id="citiesChart" height="220"></canvas>
+      </div>
+      <div class="dash-panel">
+        <div class="panel-head"><h3><i class="fa-solid fa-user-clock text-orange"></i> New vs Returning Users</h3></div>
+        <canvas id="usersChart" height="220"></canvas>
+      </div>
+    </div>
+
+    <div class="dash-panel">
+      <div class="panel-head"><h3><i class="fa-solid fa-bus text-orange"></i> Bus Type Demand Over Time</h3></div>
+      <canvas id="demandChart" height="100"></canvas>
+    </div>
+  </main>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/layout.js"></script>
+<script src="js/app.js"></script>
+<script>
+  const session = srRequireAuth();
+  if (session) {
+    srRenderDashSidebar("admin", "analytics");
+
+    function getAnalyticsBarColor() {
+      const color = getComputedStyle(document.documentElement).getPropertyValue('--ink-900').trim();
+      return color || '#0B1F3A';
+    }
+
+    function getAnalyticsLineColor() {
+      const color = getComputedStyle(document.documentElement).getPropertyValue('--ink-900').trim();
+      return color || '#F4F8FC';
+    }
+
+    const citiesChart = new Chart(document.getElementById("citiesChart"), {
+      type: 'bar',
+      data: { labels: ['Mumbai','Bengaluru','Delhi','Pune','Hyderabad','Chennai'], datasets: [{ label: 'Bookings', data: [12400,10800,9600,8200,7400,6900], backgroundColor: getAnalyticsBarColor(), borderRadius: 6 }] },
+      options: { indexAxis: 'y', plugins: { legend: { display: false } } }
+    });
+
+    const themeObserver = new MutationObserver(mutations => {
+      if (mutations.some(m => m.attributeName === 'data-theme')) {
+        citiesChart.data.datasets[0].backgroundColor = getAnalyticsBarColor();
+        demandChart.data.datasets[0].borderColor = getAnalyticsLineColor();
+        citiesChart.update();
+        demandChart.update();
+      }
+    });
+    themeObserver.observe(document.documentElement, { attributes: true });
+
+    new Chart(document.getElementById("usersChart"), {
+      type: 'doughnut',
+      data: { labels: ['Returning Users','New Users'], datasets: [{ data: [64, 36], backgroundColor: ['#FF8A00','#4FC3F7'] }] },
+      options: { plugins: { legend: { position: 'bottom' } } }
+    });
+
+    const demandChart = new Chart(document.getElementById("demandChart"), {
+      type: 'line',
+      data: {
+        labels: ['Jan','Feb','Mar','Apr','May','Jun'],
+        datasets: [
+          { label: 'AC Sleeper', data: [3200,3400,3100,3800,4100,4400], borderColor: getAnalyticsLineColor(), tension:.4 },
+          { label: 'Non-AC Seater', data: [2800,2600,2500,2400,2300,2200], borderColor: '#FF8A00', tension:.4 },
+          { label: 'Volvo', data: [1200,1300,1450,1500,1620,1700], borderColor: '#4FC3F7', tension:.4 },
+        ]
+      },
+      options: { scales: { y: { beginAtZero: true } } }
+    });
+  }
+</script>
+</body>
+</html>

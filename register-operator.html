@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Become an Operator Partner — SwiftRide Cloud</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/auth.css">
+<link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+
+<div id="sr-navbar-mount"></div>
+
+<header class="page-hero">
+  <div class="container">
+    <h1>Bring your fleet onto SwiftRide Cloud</h1>
+    <p>Get a dashboard for fares, schedules, and bookings — backed by the same cloud infrastructure passengers already trust.</p>
+  </div>
+</header>
+
+<section class="section">
+  <div class="container" style="max-width:640px;">
+    <div class="contact-form-card reveal">
+      <h3 style="font-size:18px; margin-bottom:20px;">Operator Partner Application</h3>
+      <form id="opForm">
+        <div class="grid" style="grid-template-columns: 1fr 1fr;">
+          <div class="field"><label>Company / Fleet Name</label><input class="input" required></div>
+          <div class="field"><label>Contact Person</label><input class="input" required></div>
+          <div class="field"><label>Business Email</label><input type="email" class="input" required></div>
+          <div class="field"><label>Phone Number</label><input class="input" required></div>
+          <div class="field"><label>Fleet Size</label><input type="number" class="input" placeholder="e.g. 12" required></div>
+          <div class="field"><label>Primary Operating City</label><input class="input" list="citiesList" required></div>
+        </div>
+        <datalist id="citiesList"></datalist>
+        <div class="field"><label>Tell us about your routes</label><textarea class="input" rows="4" placeholder="Which cities do you currently serve?"></textarea></div>
+        <button type="submit" class="btn btn-primary btn-block">Submit Application <i class="fa-solid fa-arrow-right"></i></button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<div id="sr-footer-mount"></div>
+
+<script src="js/data.js"></script>
+<script src="js/layout.js"></script>
+<script src="js/app.js"></script>
+<script>
+  srRenderNavbar("");
+  srRenderFooter();
+  document.getElementById("citiesList").innerHTML = SR_CITIES.map(c => `<option value="${c}">`).join("");
+  document.getElementById("opForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    srToast("Application submitted! Our partnerships team will reach out within 2 business days.", "success");
+    e.target.reset();
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Support Tickets — SwiftRide Cloud</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+
+<div class="dash-shell">
+  <div id="sr-dash-sidebar-mount"></div>
+
+  <main class="dash-main">
+    <div class="dash-topbar">
+      <div><h1>Support Tickets</h1><div class="sub">Raise an issue or track an existing request.</div></div>
+      <button class="btn btn-primary" id="newTicketBtn"><i class="fa-solid fa-plus"></i> New Ticket</button>
+    </div>
+
+    <div class="dash-panel" id="newTicketForm" style="display:none;">
+      <h3 style="font-size:16px; margin-bottom:18px;">Raise a new ticket</h3>
+      <form id="ticketForm">
+        <div class="grid" style="grid-template-columns: 1fr 1fr;">
+          <div class="field"><label>Category</label>
+            <select class="input" id="tCategory"><option>Booking Issue</option><option>Payment Issue</option><option>Refund Request</option><option>Bus Delay</option><option>Other</option></select>
+          </div>
+          <div class="field"><label>Related Booking ID (optional)</label><input class="input" id="tBookingId" placeholder="SRC88421019"></div>
+        </div>
+        <div class="field"><label>Subject</label><input class="input" id="tSubject" required></div>
+        <div class="field"><label>Description</label><textarea class="input" id="tDesc" rows="4" required></textarea></div>
+        <button type="submit" class="btn btn-primary">Submit Ticket</button>
+      </form>
+    </div>
+
+    <div class="dash-panel">
+      <div class="panel-head"><h3><i class="fa-solid fa-headset text-orange"></i> Your Tickets</h3></div>
+      <div id="ticketsList"></div>
+    </div>
+  </main>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/layout.js"></script>
+<script src="js/app.js"></script>
+<script>
+  const session = srRequireAuth();
+  if (session) {
+    srRenderDashSidebar(session.role === 'admin' ? 'admin' : session.role === 'operator' ? 'operator' : 'passenger', "support");
+
+    let tickets = JSON.parse(localStorage.getItem("sr_tickets") || "null") || [
+      { id: "TKT-10234", subject: "Refund not received for cancelled booking", category: "Refund Request", status: "open", date: "Jun 22, 2026" },
+      { id: "TKT-10198", subject: "Bus arrived 40 minutes late", category: "Bus Delay", status: "resolved", date: "Jun 14, 2026" },
+    ];
+
+    function renderTickets() {
+      document.getElementById("ticketsList").innerHTML = tickets.length ? tickets.map(t => `
+        <div class="support-ticket-row">
+          <div>
+            <div style="font-weight:700; font-size:14px; color:var(--ink-900);">${t.subject}</div>
+            <div class="text-muted" style="font-size:12px; margin-top:4px;"><span class="mono">${t.id}</span> · ${t.category} · ${t.date}</div>
+          </div>
+          <span class="badge ${t.status === 'open' ? 'badge-orange' : 'badge-success'}">${t.status === 'open' ? 'Open' : 'Resolved'}</span>
+        </div>`).join("") : `<p class="text-muted" style="font-size:13.5px; padding:20px 0;">No support tickets yet.</p>`;
+    }
+    renderTickets();
+
+    document.getElementById("newTicketBtn").addEventListener("click", () => {
+      document.getElementById("newTicketForm").style.display = document.getElementById("newTicketForm").style.display === "none" ? "block" : "none";
+    });
+
+    document.getElementById("ticketForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const newTicket = {
+        id: "TKT-" + Math.floor(10000 + Math.random()*89999),
+        subject: document.getElementById("tSubject").value,
+        category: document.getElementById("tCategory").value,
+        status: "open",
+        date: new Date().toLocaleDateString("en-IN", { day: 'numeric', month: 'short', year: 'numeric' })
+      };
+      tickets.unshift(newTicket);
+      localStorage.setItem("sr_tickets", JSON.stringify(tickets));
+      renderTickets();
+      e.target.reset();
+      document.getElementById("newTicketForm").style.display = "none";
+      srToast("Support ticket submitted. We'll respond within 24 hours.", "success");
+    });
+  }
+</script>
+</body>
+</html>

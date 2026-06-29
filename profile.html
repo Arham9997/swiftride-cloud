@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profile — SwiftRide Cloud</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+
+<div class="dash-shell">
+  <div id="sr-dash-sidebar-mount"></div>
+
+  <main class="dash-main">
+    <div class="dash-topbar"><div><h1>Profile</h1><div class="sub">Manage your personal information.</div></div></div>
+
+    <div class="profile-header">
+      <div class="profile-avatar-lg" id="profileAvatar">A</div>
+      <div>
+        <h2 style="color:white; font-size:20px;" id="profileName">—</h2>
+        <p style="color:rgba(255,255,255,0.65); font-size:13.5px; margin-top:4px;" id="profileEmail">—</p>
+        <span class="badge" style="background:rgba(255,255,255,0.15); color:white; margin-top:8px; display:inline-flex;" id="profileRoleBadge">Passenger</span>
+      </div>
+    </div>
+
+    <div class="dash-panel">
+      <h3 style="font-size:16px; margin-bottom:18px;">Personal Information</h3>
+      <form id="profileForm">
+        <div class="grid" style="grid-template-columns: 1fr 1fr;">
+          <div class="field"><label>Full Name</label><input class="input" id="pName" required></div>
+          <div class="field"><label>Email Address</label><input type="email" class="input" id="pEmail" required></div>
+          <div class="field"><label>Mobile Number</label><input class="input" id="pMobile" placeholder="10-digit number"></div>
+          <div class="field"><label>Date of Birth</label><input type="date" class="input" id="pDob"></div>
+          <div class="field"><label>Gender</label><select class="input" id="pGender"><option>Male</option><option>Female</option><option>Other</option></select></div>
+          <div class="field"><label>City</label><input class="input" id="pCity" list="citiesList"></div>
+        </div>
+        <datalist id="citiesList"></datalist>
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+      </form>
+    </div>
+
+    <div class="dash-panel">
+      <h3 style="font-size:16px; margin-bottom:18px;">Change Password</h3>
+      <form id="passForm">
+        <div class="grid" style="grid-template-columns: 1fr 1fr 1fr;">
+          <div class="field"><label>Current Password</label><input type="password" class="input"></div>
+          <div class="field"><label>New Password</label><input type="password" class="input"></div>
+          <div class="field"><label>Confirm New Password</label><input type="password" class="input"></div>
+        </div>
+        <button type="submit" class="btn btn-outline">Update Password</button>
+      </form>
+    </div>
+  </main>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/layout.js"></script>
+<script src="js/app.js"></script>
+<script>
+  const session = srRequireAuth();
+  if (session) {
+    srRenderDashSidebar(session.role === 'admin' ? 'admin' : session.role === 'operator' ? 'operator' : 'passenger', "profile");
+    document.getElementById("citiesList").innerHTML = SR_CITIES.map(c => `<option value="${c}">`).join("");
+
+    document.getElementById("profileAvatar").textContent = session.name.charAt(0).toUpperCase();
+    document.getElementById("profileName").textContent = session.name;
+    document.getElementById("profileEmail").textContent = session.email;
+    document.getElementById("profileRoleBadge").textContent = session.role.charAt(0).toUpperCase() + session.role.slice(1);
+    document.getElementById("pName").value = session.name;
+    document.getElementById("pEmail").value = session.email;
+
+    document.getElementById("profileForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      session.name = document.getElementById("pName").value.trim() || session.name;
+      session.email = document.getElementById("pEmail").value.trim() || session.email;
+      srSetSession(session);
+      document.getElementById("profileName").textContent = session.name;
+      document.getElementById("profileEmail").textContent = session.email;
+      document.getElementById("profileAvatar").textContent = session.name.charAt(0).toUpperCase();
+      srToast("Profile updated successfully", "success");
+    });
+
+    document.getElementById("passForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      srToast("Password updated successfully", "success");
+      e.target.reset();
+    });
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Payment — SwiftRide Cloud</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/payment.css">
+</head>
+<body>
+
+<div id="sr-navbar-mount"></div>
+
+<div class="container payment-page-wrap">
+  <div class="flex-between" style="margin-bottom:24px;">
+    <h1 style="font-size:24px;"><i class="fa-solid fa-lock text-orange" style="font-size:18px;"></i> Secure Checkout</h1>
+    <span class="badge badge-success"><i class="fa-solid fa-shield-halved"></i> 256-bit SSL Encrypted</span>
+  </div>
+
+  <div class="payment-layout">
+    <div class="pay-methods-card">
+      <h3 style="font-size:15px; margin-bottom:18px;">Choose payment method</h3>
+      <div class="method-tabs">
+        <div class="method-tab active" data-method="card"><i class="fa-solid fa-credit-card"></i> Card</div>
+        <div class="method-tab" data-method="upi"><i class="fa-solid fa-mobile-screen"></i> UPI</div>
+        <div class="method-tab" data-method="netbanking"><i class="fa-solid fa-building-columns"></i> Net Banking</div>
+        <div class="method-tab" data-method="wallet"><i class="fa-solid fa-wallet"></i> Wallet</div>
+        <div class="method-tab" data-method="qr"><i class="fa-solid fa-qrcode"></i> QR Pay</div>
+      </div>
+
+      <!-- CARD -->
+      <div class="method-panel show" data-panel="card">
+        <div class="card-visual">
+          <div class="chip"></div>
+          <div class="num" id="cardNumPreview">•••• •••• •••• ••••</div>
+          <div class="meta"><span id="cardNamePreview">YOUR NAME</span><span id="cardExpPreview">MM/YY</span></div>
+        </div>
+        <div class="field"><label>Card Number</label><input class="input" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19"></div>
+        <div class="field"><label>Cardholder Name</label><input class="input" id="cardName" placeholder="Name on card"></div>
+        <div class="mini-field-row" style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+          <div class="field"><label>Expiry Date</label><input class="input" id="cardExpiry" placeholder="MM/YY" maxlength="5"></div>
+          <div class="field"><label>CVV</label><input class="input" id="cardCvv" placeholder="123" maxlength="3" type="password"></div>
+        </div>
+        <label class="checkbox-row" style="margin-top:6px;"><input type="checkbox"> Save this card for faster checkout next time</label>
+      </div>
+
+      <!-- UPI -->
+      <div class="method-panel" data-panel="upi">
+        <div class="upi-apps">
+          <div class="upi-app active" data-upi="gpay"><i class="fa-brands fa-google-pay"></i><span>Google Pay</span></div>
+          <div class="upi-app" data-upi="phonepe"><i class="fa-solid fa-mobile-screen-button"></i><span>PhonePe</span></div>
+          <div class="upi-app" data-upi="paytm"><i class="fa-solid fa-wallet"></i><span>Paytm</span></div>
+        </div>
+        <div class="field"><label>UPI ID</label><input class="input" id="upiId" placeholder="yourname@upi"></div>
+        <p class="text-muted" style="font-size:12.5px;">You'll get a payment request on your UPI app. Approve it there to complete the booking.</p>
+      </div>
+
+      <!-- NET BANKING -->
+      <div class="method-panel" data-panel="netbanking">
+        <div class="field"><label>Select your bank</label></div>
+        <div class="bank-grid" id="bankGrid"></div>
+      </div>
+
+      <!-- WALLET -->
+      <div class="method-panel" data-panel="wallet">
+        <div class="wallet-list">
+          <div class="wallet-item active" data-wallet="swiftride"><span><i class="fa-solid fa-wallet" style="margin-right:10px; color:var(--orange-500);"></i>SwiftRide Wallet</span><span class="bal">Balance: ₹1,240</span></div>
+          <div class="wallet-item" data-wallet="paytm"><span><i class="fa-solid fa-wallet" style="margin-right:10px; color:var(--ink-500);"></i>Paytm Wallet</span><span class="bal">Balance: ₹560</span></div>
+          <div class="wallet-item" data-wallet="amazonpay"><span><i class="fa-solid fa-wallet" style="margin-right:10px; color:var(--ink-500);"></i>Amazon Pay</span><span class="bal">Balance: ₹0</span></div>
+        </div>
+      </div>
+
+      <!-- QR -->
+      <div class="method-panel" data-panel="qr">
+        <div class="qr-box">
+          <div class="qr-frame"><i class="fa-solid fa-qrcode" style="font-size:90px; color:var(--navy-900);"></i></div>
+          <p style="margin-top:16px; font-size:13.5px; color:var(--ink-700); font-weight:600;">Scan with any UPI app</p>
+          <p class="text-muted" style="font-size:12px; margin-top:4px;">QR refreshes every 3 minutes for security</p>
+        </div>
+      </div>
+
+      <button class="btn btn-primary btn-block" id="payNowBtn" style="margin-top:24px; padding:16px;">
+        <i class="fa-solid fa-lock"></i> Pay <span id="payAmountLabel">₹0</span> Securely
+      </button>
+    </div>
+
+    <div class="pay-summary-card">
+      <h3 style="font-size:15px; margin-bottom:16px;">Trip Summary</h3>
+      <div class="summary-trip-card">
+        <div class="route"><span id="sumRoute">—</span></div>
+        <div class="meta" id="sumMeta">—</div>
+        <div class="meta" id="sumSeats" style="margin-top:6px;">—</div>
+      </div>
+      <div class="fare-line"><span>Base fare</span><span class="v" id="sumBase">₹0</span></div>
+      <div class="fare-line"><span>Convenience fee</span><span class="v" id="sumConv">₹0</span></div>
+      <div class="fare-line"><span>GST (5%)</span><span class="v" id="sumGst">₹0</span></div>
+      <div class="fare-line total"><span>Total</span><span class="v" id="sumTotal">₹0</span></div>
+      <div class="flex" style="gap:8px; margin-top:18px; align-items:flex-start; background:var(--ink-100); padding:12px; border-radius:var(--r-sm);">
+        <i class="fa-solid fa-circle-info text-orange" style="margin-top:2px;"></i>
+        <p style="font-size:12px; color:var(--ink-700); margin:0; line-height:1.5;">This is a demo checkout. No real payment gateway is contacted and no money will be charged.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="sr-footer-mount"></div>
+
+<script src="js/data.js"></script>
+<script src="js/layout.js"></script>
+<script src="js/app.js"></script>
+<script>
+  srRenderNavbar("", true);
+  srRenderFooter();
+
+  const draft = srGetCurrentBookingDraft();
+  if (!draft) {
+    srToast("Your booking session expired. Please search again.", "error");
+    setTimeout(() => window.location.href = "search.html", 1200);
+  } else {
+    document.getElementById("sumRoute").textContent = `${draft.source} → ${draft.destination}`;
+    document.getElementById("sumMeta").textContent = `${draft.bus.operator} · ${draft.bus.type} · ${draft.bus.depTime}`;
+    document.getElementById("sumSeats").textContent = `Seats: ${draft.selectedSeats.join(", ")}`;
+    document.getElementById("sumBase").textContent = srFormatCurrency(draft.fare.base);
+    document.getElementById("sumConv").textContent = srFormatCurrency(draft.fare.conv);
+    document.getElementById("sumGst").textContent = srFormatCurrency(draft.fare.gst);
+    document.getElementById("sumTotal").textContent = srFormatCurrency(draft.fare.total);
+    document.getElementById("payAmountLabel").textContent = srFormatCurrency(draft.fare.total);
+  }
+
+  const banks = ["State Bank of India", "HDFC Bank", "ICICI Bank", "Axis Bank", "Punjab National Bank", "Kotak Mahindra"];
+  document.getElementById("bankGrid").innerHTML = banks.map((b,i) => `<div class="bank-item ${i===0?'active':''}" data-bank="${b}">${b}</div>`).join("");
+  document.querySelectorAll(".bank-item").forEach(el => el.addEventListener("click", () => {
+    document.querySelectorAll(".bank-item").forEach(b => b.classList.remove("active"));
+    el.classList.add("active");
+  }));
+
+  document.querySelectorAll(".method-tab").forEach(tab => {
+    tab.addEventListener("click", () => {
+      document.querySelectorAll(".method-tab").forEach(t => t.classList.remove("active"));
+      document.querySelectorAll(".method-panel").forEach(p => p.classList.remove("show"));
+      tab.classList.add("active");
+      document.querySelector(`.method-panel[data-panel="${tab.dataset.method}"]`).classList.add("show");
+    });
+  });
+
+  document.querySelectorAll(".upi-app").forEach(el => el.addEventListener("click", () => {
+    document.querySelectorAll(".upi-app").forEach(a => a.classList.remove("active"));
+    el.classList.add("active");
+  }));
+  document.querySelectorAll(".wallet-item").forEach(el => el.addEventListener("click", () => {
+    document.querySelectorAll(".wallet-item").forEach(w => w.classList.remove("active"));
+    el.classList.add("active");
+  }));
+
+  // Card input live preview + formatting
+  const cardNumber = document.getElementById("cardNumber");
+  cardNumber.addEventListener("input", () => {
+    let v = cardNumber.value.replace(/\D/g,'').slice(0,16);
+    cardNumber.value = v.replace(/(.{4})/g, '$1 ').trim();
+    document.getElementById("cardNumPreview").textContent = cardNumber.value ? cardNumber.value.padEnd(19,'•') : "•••• •••• •••• ••••";
+  });
+  document.getElementById("cardName").addEventListener("input", (e) => {
+    document.getElementById("cardNamePreview").textContent = e.target.value.toUpperCase() || "YOUR NAME";
+  });
+  const cardExpiry = document.getElementById("cardExpiry");
+  cardExpiry.addEventListener("input", () => {
+    let v = cardExpiry.value.replace(/\D/g,'').slice(0,4);
+    if (v.length >= 3) v = v.slice(0,2) + "/" + v.slice(2);
+    cardExpiry.value = v;
+    document.getElementById("cardExpPreview").textContent = v || "MM/YY";
+  });
+
+  document.getElementById("payNowBtn").addEventListener("click", () => {
+    if (!draft) return;
+    const activeMethod = document.querySelector(".method-tab.active").dataset.method;
+
+    if (activeMethod === "card") {
+      const num = document.getElementById("cardNumber").value.replace(/\s/g,'');
+      const name = document.getElementById("cardName").value.trim();
+      const exp = document.getElementById("cardExpiry").value;
+      const cvv = document.getElementById("cardCvv").value;
+      if (num.length < 16 || !name || exp.length < 5 || cvv.length < 3) {
+        srToast("Please fill in all card details", "error");
+        return;
+      }
+    } else if (activeMethod === "upi") {
+      const upi = document.getElementById("upiId").value.trim();
+      if (!upi.includes("@")) {
+        srToast("Enter a valid UPI ID", "error");
+        return;
+      }
+    }
+
+    const btn = document.getElementById("payNowBtn");
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing payment…';
+
+    setTimeout(() => {
+      // Simulate ~92% success rate for demo realism
+      const success = Math.random() > 0.08;
+      const bookingId = srGenerateBookingId();
+      const booking = {
+        id: bookingId,
+        status: success ? "confirmed" : "failed",
+        bus: draft.bus,
+        source: draft.source,
+        destination: draft.destination,
+        date: draft.date,
+        seats: draft.selectedSeats,
+        passenger: draft.passenger,
+        fare: draft.fare,
+        method: activeMethod,
+        createdAt: new Date().toISOString()
+      };
+      if (success) {
+        srSaveBooking(booking);
+        sessionStorage.setItem("sr_last_booking", JSON.stringify(booking));
+        window.location.href = "booking-confirmation.html";
+      } else {
+        sessionStorage.setItem("sr_last_booking", JSON.stringify(booking));
+        window.location.href = "payment-failed.html";
+      }
+    }, 1800);
+  });
+</script>
+</body>
+</html>

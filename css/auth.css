@@ -1,0 +1,54 @@
+/* ===========================================================
+   SwiftRide Cloud — Auth Pages
+   =========================================================== */
+
+.auth-wrap {
+  min-height: 100vh;
+  display: grid; grid-template-columns: 1fr 1fr;
+}
+@media (max-width: 880px) { .auth-wrap { grid-template-columns: 1fr; } }
+
+.auth-visual {
+  background: linear-gradient(155deg, var(--navy-900), var(--navy-700));
+  position: relative; overflow: hidden;
+  display: flex; flex-direction: column; justify-content: center; padding: 60px;
+}
+@media (max-width: 880px) { .auth-visual { display: none; } }
+.auth-visual::before { content:''; position:absolute; top:-120px; left:-100px; width:380px; height:380px; background: radial-gradient(circle, rgba(255,138,0,0.2), transparent 70%); }
+.auth-visual::after { content:''; position:absolute; bottom:-100px; right:-80px; width:300px; height:300px; background: radial-gradient(circle, rgba(79,195,247,0.18), transparent 70%); }
+.auth-visual .content { position: relative; z-index: 1; color: white; max-width: 420px; }
+.auth-visual h2 { color: white; font-size: 30px; line-height: 1.25; }
+.auth-visual p { color: rgba(255,255,255,0.65); margin-top: 16px; line-height: 1.7; font-size: 14.5px; }
+.auth-feature-list { margin-top: 32px; display: flex; flex-direction: column; gap: 16px; }
+.auth-feature-list .item { display: flex; align-items: center; gap: 12px; font-size: 13.5px; color: rgba(255,255,255,0.85); }
+.auth-feature-list .item i { width: 32px; height: 32px; border-radius: 9px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; color: var(--orange-400); }
+
+.auth-form-side { display: flex; align-items: center; justify-content: center; padding: 60px 24px; }
+.auth-form-box { width: 100%; max-width: 400px; }
+.auth-form-box .brand { margin-bottom: 36px; }
+.auth-form-box h1 { font-size: 24px; }
+.auth-form-box .sub { color: var(--ink-500); font-size: 14px; margin-top: 6px; margin-bottom: 28px; }
+
+.role-select { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 22px; }
+.role-option { padding: 14px 8px; border-radius: var(--r-md); border: 1.5px solid var(--ink-300); text-align: center; cursor: pointer; transition: all .2s; }
+.role-option i { font-size: 18px; color: var(--ink-500); display: block; margin-bottom: 6px; }
+.role-option span { font-size: 12px; font-weight: 600; color: var(--ink-700); }
+.role-option.active { border-color: var(--orange-500); background: rgba(255,138,0,0.06); }
+.role-option.active i, .role-option.active span { color: var(--orange-600); }
+
+.divider-or { display: flex; align-items: center; gap: 12px; margin: 22px 0; color: var(--ink-500); font-size: 12.5px; }
+.divider-or::before, .divider-or::after { content: ''; flex: 1; height: 1px; background: var(--ink-100); }
+
+.social-btn-row { display: flex; gap: 10px; }
+.social-btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; border: 1.5px solid var(--ink-300); border-radius: var(--r-sm); font-size: 13px; font-weight: 600; color: var(--ink-700); transition: all .2s; cursor: pointer; background: white; }
+.social-btn:hover { border-color: var(--ink-500); }
+
+.password-strength { height: 4px; border-radius: 2px; background: var(--ink-100); margin-top: 8px; overflow: hidden; }
+.password-strength .bar { height: 100%; width: 0%; transition: width .3s, background .3s; }
+
+.otp-inputs { display: flex; gap: 10px; justify-content: center; margin: 20px 0; }
+.otp-inputs input { width: 48px; height: 56px; text-align: center; font-size: 22px; font-weight: 700; border-radius: var(--r-sm); border: 1.5px solid var(--ink-300); font-family: var(--font-mono); }
+.otp-inputs input:focus { outline: none; border-color: var(--sky-400); box-shadow: 0 0 0 4px rgba(79,195,247,0.18); }
+
+.field-link { font-size: 13px; color: var(--orange-600); font-weight: 600; }
+.remember-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-size: 13px; }

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Search Buses — SwiftRide Cloud</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/search.css">
+</head>
+<body>
+
+<div id="sr-navbar-mount"></div>
+
+<header class="search-hero">
+  <div class="container">
+    <h1 id="routeHeading">Loading routes…</h1>
+    <div class="route-summary"><i class="fa-regular fa-calendar"></i> <span id="dateSummary"></span> &nbsp;·&nbsp; <i class="fa-regular fa-user"></i> <span id="paxSummary"></span></div>
+  </div>
+</header>
+
+<div class="container">
+  <form class="glass search-bar-sticky" id="refineForm">
+    <div class="field" style="margin-bottom:0;"><label>From</label><input type="text" class="input" id="srcInput" list="citiesList"></div>
+    <div class="field" style="margin-bottom:0;"><label>To</label><input type="text" class="input" id="destInput" list="citiesList"></div>
+    <datalist id="citiesList"></datalist>
+    <div class="field" style="margin-bottom:0;"><label>Date</label><input type="date" class="input" id="dateInput"></div>
+    <div class="field" style="margin-bottom:0;"><label>Passengers</label>
+      <select class="input" id="paxInput"><option value="1">1 Passenger</option><option value="2">2 Passengers</option><option value="3">3 Passengers</option><option value="4">4 Passengers</option></select>
+    </div>
+    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+  </form>
+
+  <div class="results-layout">
+    <aside class="filters-panel">
+      <h4><i class="fa-solid fa-sliders text-orange"></i> Filters</h4>
+
+      <div class="filter-group">
+        <div class="group-title">Bus Type</div>
+        <label class="checkbox-row"><input type="checkbox" class="busTypeFilter" value="AC Sleeper" checked> AC Sleeper</label>
+        <label class="checkbox-row"><input type="checkbox" class="busTypeFilter" value="Non-AC Seater" checked> Non-AC Seater</label>
+        <label class="checkbox-row"><input type="checkbox" class="busTypeFilter" value="AC Seater" checked> AC Seater</label>
+        <label class="checkbox-row"><input type="checkbox" class="busTypeFilter" value="Volvo Multi-Axle" checked> Volvo Multi-Axle</label>
+        <label class="checkbox-row"><input type="checkbox" class="busTypeFilter" value="Electric AC" checked> Electric AC</label>
+      </div>
+
+      <div class="filter-group">
+        <div class="group-title">Departure Time</div>
+        <label class="checkbox-row"><input type="checkbox" class="depTimeFilter" value="early" checked> Before 6 AM</label>
+        <label class="checkbox-row"><input type="checkbox" class="depTimeFilter" value="morning" checked> 6 AM – 12 PM</label>
+        <label class="checkbox-row"><input type="checkbox" class="depTimeFilter" value="afternoon" checked> 12 PM – 6 PM</label>
+        <label class="checkbox-row"><input type="checkbox" class="depTimeFilter" value="night" checked> After 6 PM</label>
+      </div>
+
+      <div class="filter-group">
+        <div class="group-title">Max Fare: <span id="maxFareLabel">₹2000</span></div>
+        <input type="range" id="fareRange" min="300" max="2000" value="2000" style="width:100%; accent-color: var(--orange-500);">
+        <div class="range-row"><span>₹300</span><span>₹2000</span></div>
+      </div>
+
+      <div class="filter-group">
+        <div class="group-title">Minimum Rating</div>
+        <label class="checkbox-row"><input type="radio" name="ratingFilter" value="0" checked> Any rating</label>
+        <label class="checkbox-row"><input type="radio" name="ratingFilter" value="4"> 4.0 & above</label>
+        <label class="checkbox-row"><input type="radio" name="ratingFilter" value="4.5"> 4.5 & above</label>
+      </div>
+    </aside>
+
+    <main>
+      <div class="results-toolbar">
+        <div class="results-count" id="resultsCount">Searching…</div>
+        <div class="sort-pills">
+          <button class="sort-pill active" data-sort="departure">Departure</button>
+          <button class="sort-pill" data-sort="fare">Price: Low to High</button>
+          <button class="sort-pill" data-sort="duration">Duration</button>
+          <button class="sort-pill" data-sort="rating">Rating</button>
+        </div>
+      </div>
+
+      <div id="busResultsList">
+        <div class="skeleton" style="height:120px; margin-bottom:16px;"></div>
+        <div class="skeleton" style="height:120px; margin-bottom:16px;"></div>
+        <div class="skeleton" style="height:120px;"></div>
+      </div>
+
+      <div id="paginationWrap" class="flex-center" style="gap:8px; margin-top:30px;"></div>
+    </main>
+  </div>
+</div>
+
+<div style="height:80px;"></div>
+<div id="sr-footer-mount"></div>
+
+<script src="js/data.js"></script>
+<script src="js/layout.js"></script>
+<script src="js/app.js"></script>
+<script>
+  srRenderNavbar("search");
+  srRenderFooter();
+
+  document.getElementById("citiesList").innerHTML = SR_CITIES.map(c => `<option value="${c}">`).join("");
+
+  const params = new URLSearchParams(window.location.search);
+  let source = params.get("source") || "Mumbai";
+  let destination = params.get("destination") || "Pune";
+  let date = params.get("date") || new Date(Date.now() + 86400000).toISOString().split("T")[0];
+  let pax = params.get("pax") || "1";
+
+  document.getElementById("srcInput").value = source;
+  document.getElementById("destInput").value = destination;
+  document.getElementById("dateInput").value = date;
+  document.getElementById("dateInput").min = new Date().toISOString().split("T")[0];
+  document.getElementById("paxInput").value = pax;
+
+  document.getElementById("routeHeading").innerHTML = `${source} <i class="fa-solid fa-arrow-right" style="font-size:14px; color: var(--orange-400); margin:0 8px;"></i> ${destination}`;
+  document.getElementById("dateSummary").textContent = new Date(date + "T00:00").toLocaleDateString("en-IN", { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+  document.getElementById("paxSummary").textContent = `${pax} Passenger${pax > 1 ? 's' : ''}`;
+
+  let allBuses = [];
+  let currentSort = "departure";
+  let currentPage = 1;
+  const PAGE_SIZE = 5;
+
+  function loadBuses() {
+    document.getElementById("busResultsList").innerHTML = `
+      <div class="skeleton" style="height:120px; margin-bottom:16px;"></div>
+      <div class="skeleton" style="height:120px; margin-bottom:16px;"></div>
+      <div class="skeleton" style="height:120px;"></div>`;
+    setTimeout(() => {
+      allBuses = generateBuses(source, destination, date);
+      currentPage = 1;
+      applyFiltersAndRender();
+    }, 650);
+  }
+
+  function timeBucket(depTime) {
+    const hr = parseInt(depTime.split(":")[0], 10);
+    if (hr < 6) return "early";
+    if (hr < 12) return "morning";
+    if (hr < 18) return "afternoon";
+    return "night";
+  }
+
+  function applyFiltersAndRender() {
+    const typeFilters = [...document.querySelectorAll(".busTypeFilter:checked")].map(c => c.value);
+    const timeFilters = [...document.querySelectorAll(".depTimeFilter:checked")].map(c => c.value);
+    const maxFare = parseInt(document.getElementById("fareRange").value, 10);
+    const minRating = parseFloat(document.querySelector('input[name="ratingFilter"]:checked').value);
+
+    let filtered = allBuses.filter(b =>
+      typeFilters.includes(b.type) &&
+      timeFilters.includes(timeBucket(b.depTime)) &&
+      b.fare <= maxFare &&
+      parseFloat(b.rating) >= minRating
+    );
+
+    filtered.sort((a, b) => {
+      if (currentSort === "departure") return a.depTime.localeCompare(b.depTime);
+      if (currentSort === "fare") return a.fare - b.fare;
+      if (currentSort === "duration") return parseInt(a.duration) - parseInt(b.duration);
+      if (currentSort === "rating") return parseFloat(b.rating) - parseFloat(a.rating);
+      return 0;
+    });
+
+    document.getElementById("resultsCount").textContent = `${filtered.length} buses found`;
+
+    const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+    if (currentPage > totalPages) currentPage = totalPages;
+    const pageItems = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
+    if (!pageItems.length) {
+      document.getElementById("busResultsList").innerHTML = `
+        <div class="glass" style="padding:50px; text-align:center;">
+          <i class="fa-solid fa-bus-simple" style="font-size:32px; color: var(--ink-300);"></i>
+          <h3 style="margin-top:14px; font-size:17px;">No buses match these filters</h3>
+          <p class="text-muted" style="margin-top:6px; font-size:14px;">Try widening your fare range or enabling more departure windows.</p>
+        </div>`;
+    } else {
+      document.getElementById("busResultsList").innerHTML = pageItems.map(renderBusCard).join("");
+    }
+    renderPagination(totalPages);
+  }
+
+  function renderBusCard(bus) {
+    const lowSeats = bus.availableSeats <= 6;
+    return `
+    <div class="bus-card card-lift">
+      <div class="operator-block">
+        <div class="op-name">${bus.operator}</div>
+        <div class="op-type">${bus.type}</div>
+        <div class="op-rating"><i class="fa-solid fa-star"></i> ${bus.rating}</div>
+      </div>
+      <div class="time-block">
+        <div class="time-col"><div class="t">${bus.depTime}</div><div class="l">${bus.source}</div></div>
+        <div class="route-line"></div>
+        <div class="time-col"><div class="t">${bus.arrTime}</div><div class="l">${bus.destination}</div></div>
+      </div>
+      <div class="seats-block">
+        <div class="${lowSeats ? 'avail low' : 'avail'}">${bus.availableSeats} seats left</div>
+        <div class="text-muted" style="font-size:12px; margin-top:2px;">${bus.duration}</div>
+        <div class="amenities">${bus.amenities.slice(0,2).map(a => `<span class="amenity-chip">${a}</span>`).join("")}</div>
+      </div>
+      <div class="fare-block">
+        <div class="price">₹${bus.fare}</div>
+        <div class="per">per seat</div>
+      </div>
+      <a href="bus-details.html?id=${bus.id}&source=${source}&destination=${destination}&date=${date}&pax=${pax}" class="btn btn-primary btn-sm">View Seats</a>
+    </div>`;
+  }
+
+  function renderPagination(totalPages) {
+    const wrap = document.getElementById("paginationWrap");
+    if (totalPages <= 1) { wrap.innerHTML = ""; return; }
+    let html = "";
+    for (let i = 1; i <= totalPages; i++) {
+      html += `<button class="btn ${i === currentPage ? 'btn-ghost-navy' : 'btn-outline'} btn-sm" data-page="${i}" style="min-width:40px;">${i}</button>`;
+    }
+    wrap.innerHTML = html;
+    wrap.querySelectorAll("button").forEach(btn => btn.addEventListener("click", () => {
+      currentPage = parseInt(btn.dataset.page, 10);
+      applyFiltersAndRender();
+      window.scrollTo({ top: 300, behavior: "smooth" });
+    }));
+  }
+
+  // Cache buses per bus id so bus-details.html can retrieve them
+  function cacheBusesForDetails() {
+    sessionStorage.setItem("sr_search_cache", JSON.stringify({ source, destination, date, buses: allBuses }));
+  }
+
+  document.querySelectorAll(".busTypeFilter, .depTimeFilter").forEach(el => el.addEventListener("change", () => { currentPage = 1; applyFiltersAndRender(); cacheBusesForDetails(); }));
+  document.querySelectorAll('input[name="ratingFilter"]').forEach(el => el.addEventListener("change", () => { currentPage = 1; applyFiltersAndRender(); cacheBusesForDetails(); }));
+  document.getElementById("fareRange").addEventListener("input", (e) => {
+    document.getElementById("maxFareLabel").textContent = "₹" + e.target.value;
+    currentPage = 1; applyFiltersAndRender(); cacheBusesForDetails();
+  });
+  document.querySelectorAll(".sort-pill").forEach(pill => pill.addEventListener("click", () => {
+    document.querySelectorAll(".sort-pill").forEach(p => p.classList.remove("active"));
+    pill.classList.add("active");
+    currentSort = pill.dataset.sort;
+    applyFiltersAndRender();
+  }));
+
+  document.getElementById("refineForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    source = document.getElementById("srcInput").value;
+    destination = document.getElementById("destInput").value;
+    date = document.getElementById("dateInput").value;
+    pax = document.getElementById("paxInput").value;
+    const newParams = new URLSearchParams({ source, destination, date, pax });
+    history.replaceState(null, "", `search.html?${newParams.toString()}`);
+    document.getElementById("routeHeading").innerHTML = `${source} <i class="fa-solid fa-arrow-right" style="font-size:14px; color: var(--orange-400); margin:0 8px;"></i> ${destination}`;
+    document.getElementById("dateSummary").textContent = new Date(date + "T00:00").toLocaleDateString("en-IN", { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+    document.getElementById("paxSummary").textContent = `${pax} Passenger${pax > 1 ? 's' : ''}`;
+    loadBuses();
+  });
+
+  loadBuses();
+  setTimeout(cacheBusesForDetails, 700);
+  const observer = new MutationObserver(cacheBusesForDetails);
+  observer.observe(document.getElementById("busResultsList"), { childList: true });
+</script>
+</body>
+</html>

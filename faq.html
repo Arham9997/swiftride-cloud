@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FAQ — SwiftRide Cloud</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/home.css">
+<link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+
+<div id="sr-navbar-mount"></div>
+
+<header class="page-hero">
+  <div class="container">
+    <h1>Frequently Asked Questions</h1>
+    <p>Everything about bookings, payments, cancellations, and live tracking.</p>
+  </div>
+</header>
+
+<section class="section">
+  <div class="container">
+    <div class="flex-center" style="gap:10px; margin-bottom:36px; flex-wrap:wrap;">
+      <input class="input" id="faqSearch" placeholder="Search a question…" style="max-width:420px;">
+    </div>
+    <div class="faq-list reveal" id="faqList"></div>
+  </div>
+</section>
+
+<section class="section" style="background:var(--white);">
+  <div class="container">
+    <div class="contact-cta reveal">
+      <div><h2>Still need help?</h2><p>Our support team is online around the clock.</p></div>
+      <a href="contact.html" class="btn btn-ghost-navy">Contact Support <i class="fa-solid fa-arrow-right"></i></a>
+    </div>
+  </div>
+</section>
+
+<div id="sr-footer-mount"></div>
+
+<script src="js/data.js"></script>
+<script src="js/layout.js"></script>
+<script src="js/app.js"></script>
+<script>
+  srRenderNavbar("faq");
+  srRenderFooter();
+
+  function renderFaqs(list) {
+    document.getElementById("faqList").innerHTML = list.map((f,i) => `
+      <div class="faq-item" data-i="${i}">
+        <div class="faq-question"><span>${f.q}</span><i class="fa-solid fa-plus"></i></div>
+        <div class="faq-answer"><p>${f.a}</p></div>
+      </div>`).join("") || `<p class="text-muted" style="text-align:center;">No matching questions found.</p>`;
+    document.querySelectorAll(".faq-question").forEach(q => {
+      q.addEventListener("click", () => {
+        const item = q.closest(".faq-item");
+        const ans = item.querySelector(".faq-answer");
+        const wasOpen = item.classList.contains("open");
+        document.querySelectorAll(".faq-item").forEach(i => { i.classList.remove("open"); i.querySelector(".faq-answer").style.maxHeight = null; });
+        if (!wasOpen) { item.classList.add("open"); ans.style.maxHeight = ans.scrollHeight + "px"; }
+      });
+    });
+  }
+  renderFaqs(SR_FAQS);
+
+  document.getElementById("faqSearch").addEventListener("input", (e) => {
+    const term = e.target.value.toLowerCase();
+    renderFaqs(SR_FAQS.filter(f => f.q.toLowerCase().includes(term) || f.a.toLowerCase().includes(term)));
+  });
+</script>
+</body>
+</html>

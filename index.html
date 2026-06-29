@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SwiftRide Cloud — Smart Bus Ticketing & Digital Payment Platform</title>
+<meta name="description" content="Book bus tickets instantly, track journeys in real time, and pay securely with SwiftRide Cloud — India's modern cloud-powered bus reservation platform.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/home.css">
+</head>
+<body>
+
+<div id="sr-navbar-mount"></div>
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <div class="hero-bg-shape s1"></div>
+  <div class="hero-bg-shape s2"></div>
+  <div class="hero-grid-overlay"></div>
+
+  <div class="container">
+    <div class="hero-copy">
+      <div class="hero-badge"><i class="fa-solid fa-cloud"></i> Cloud-Powered Booking Engine</div>
+      <h1>Travel Smarter with<br>SwiftRide <span class="accent">Cloud</span></h1>
+      <p class="lead">Book bus tickets instantly, track journeys in real time, and enjoy secure cloud-powered digital payments — all in one platform.</p>
+      <div class="hero-ctas">
+        <a href="search.html" class="btn btn-primary">Book Now <i class="fa-solid fa-arrow-right"></i></a>
+        <a href="#routes" class="btn btn-secondary">Explore Routes</a>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat"><div class="num">12,400+</div><div class="label">Daily Bookings</div></div>
+        <div class="hero-stat"><div class="num">350+</div><div class="label">Cities Connected</div></div>
+        <div class="hero-stat"><div class="num">4.8/5</div><div class="label">Average Rating</div></div>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="route-ticket">
+        <div class="route-ticket-top">
+          <span class="badge badge-orange mono"><i class="fa-solid fa-ticket"></i> SRC-88421</span>
+          <span class="live-pill"><span class="live-dot"></span> LIVE</span>
+        </div>
+        <div class="route-cities">
+          <div class="city"><div class="name">MUM</div><div class="time">21:30</div></div>
+          <div class="route-line"><div class="bus-dot"><i class="fa-solid fa-bus"></i></div></div>
+          <div class="city"><div class="name">PUN</div><div class="time">00:45</div></div>
+        </div>
+        <div class="route-ticket-meta">
+          <div class="item"><div class="label">Seat</div><div class="value">A4 · A5</div></div>
+          <div class="item"><div class="label">Bus Type</div><div class="value">AC Sleeper</div></div>
+          <div class="item"><div class="label">Fare</div><div class="value">₹890</div></div>
+        </div>
+      </div>
+      <div class="cloud-chip c1"><i class="fa-solid fa-shield-halved"></i> Cloud Secured</div>
+      <div class="cloud-chip c2"><i class="fa-solid fa-location-crosshairs"></i> Live Tracking</div>
+    </div>
+  </div>
+</header>
+
+<!-- ============ SEARCH WIDGET ============ -->
+<div class="container search-widget-wrap">
+  <form class="glass search-widget" id="homeSearchForm">
+    <div class="field" style="margin-bottom:0; position:relative;">
+      <label>From</label>
+      <input type="text" class="input" id="srcInput" list="citiesList" placeholder="Source city" value="Mumbai" required>
+      <button type="button" class="swap-btn" id="swapCities" aria-label="Swap cities"><i class="fa-solid fa-arrow-right-arrow-left"></i></button>
+    </div>
+    <div class="field" style="margin-bottom:0;">
+      <label>To</label>
+      <input type="text" class="input" id="destInput" list="citiesList" placeholder="Destination city" value="Pune" required>
+    </div>
+    <datalist id="citiesList"></datalist>
+    <div class="field" style="margin-bottom:0;">
+      <label>Travel Date</label>
+      <input type="date" class="input" id="dateInput" required>
+    </div>
+    <div class="field" style="margin-bottom:0;">
+      <label>Passengers</label>
+      <select class="input" id="paxInput">
+        <option>1 Passenger</option><option>2 Passengers</option><option>3 Passengers</option><option>4 Passengers</option>
+      </select>
+    </div>
+    <button type="submit" class="btn btn-primary btn-block"><i class="fa-solid fa-magnifying-glass"></i> Search Buses</button>
+  </form>
+</div>
+
+<!-- ============ POPULAR ROUTES ============ -->
+<section class="section" id="routes">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow" style="justify-content:center; display:flex;">Popular Routes</div>
+      <h2>Where travelers are heading this week</h2>
+      <p>The most booked intercity routes on SwiftRide Cloud, updated from live booking data across our network.</p>
+    </div>
+    <div class="grid reveal" style="grid-template-columns: repeat(4, 1fr);" id="popularRoutesGrid"></div>
+  </div>
+</section>
+
+<!-- ============ FEATURED DESTINATIONS ============ -->
+<section class="section" style="background:var(--white);">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow" style="justify-content:center; display:flex;">Featured Destinations</div>
+      <h2>Explore places worth the journey</h2>
+      <p>From hill towns to coastal getaways, find buses to the destinations everyone's talking about.</p>
+    </div>
+    <div class="grid reveal" style="grid-template-columns: repeat(4, 1fr);" id="destinationsGrid"></div>
+  </div>
+</section>
+
+<!-- ============ WHY CHOOSE ============ -->
+<section class="section">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow" style="justify-content:center; display:flex;">Why SwiftRide Cloud</div>
+      <h2>Built on cloud infrastructure travelers can trust</h2>
+      <p>Every booking runs through a scalable, secure backend so availability and pricing stay accurate to the second.</p>
+    </div>
+    <div class="why-grid reveal">
+      <div class="glass card-lift feature-card">
+        <div class="feature-icon orange"><i class="fa-solid fa-bolt"></i></div>
+        <h3 style="font-size:17px;">Instant Confirmation</h3>
+        <p class="text-muted" style="font-size:13.5px; margin-top:8px; line-height:1.6;">Seats are locked and confirmed in real time — no waiting, no overbooking.</p>
+      </div>
+      <div class="glass card-lift feature-card">
+        <div class="feature-icon sky"><i class="fa-solid fa-shield-halved"></i></div>
+        <h3 style="font-size:17px;">Secure Cloud Payments</h3>
+        <p class="text-muted" style="font-size:13.5px; margin-top:8px; line-height:1.6;">Bank-grade encryption and tokenized transactions on every gateway we support.</p>
+      </div>
+      <div class="glass card-lift feature-card">
+        <div class="feature-icon navy"><i class="fa-solid fa-location-crosshairs"></i> 📍</div>
+        <h3 style="font-size:17px;">Real-Time Tracking</h3>
+        <p class="text-muted" style="font-size:13.5px; margin-top:8px; line-height:1.6;">Know exactly where your bus is and get live ETA updates at your boarding point.</p>
+      </div>
+      <div class="glass card-lift feature-card">
+        <div class="feature-icon orange"><i class="fa-solid fa-headset"></i></div>
+        <h3 style="font-size:17px;">24/7 Support</h3>
+        <p class="text-muted" style="font-size:13.5px; margin-top:8px; line-height:1.6;">A dedicated support desk and live chat for anything that comes up on your trip.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SERVICES ============ -->
+<section class="section" style="background:var(--white);">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow" style="justify-content:center; display:flex;">Our Services</div>
+      <h2>Everything you need, one platform</h2>
+    </div>
+    <div class="service-row reveal">
+      <div class="service-card card-lift">
+        <div class="num">01</div>
+        <h3 class="service-title" style="font-size:18px; margin-top:14px;">Interstate Bus Booking</h3>
+        <p class="text-muted" style="font-size:14px; margin-top:10px; line-height:1.65;">Search and book AC, Non-AC, Sleeper and Volvo buses across 350+ cities with live seat maps.</p>
+      </div>
+      <div class="service-card card-lift">
+        <div class="num">02</div>
+        <h3 class="service-title" style="font-size:18px; margin-top:14px;">Corporate & Group Travel</h3>
+        <p class="text-muted" style="font-size:14px; margin-top:10px; line-height:1.65;">Bulk seat reservations, consolidated invoicing, and dedicated account management for teams.</p>
+      </div>
+      <div class="service-card card-lift">
+        <div class="num">03</div>
+        <h3 class="service-title" style="font-size:18px; margin-top:14px;">Operator Partner Tools</h3>
+        <p class="text-muted" style="font-size:14px; margin-top:10px; line-height:1.65;">Fleet, route, and fare management dashboards built for bus operators running on the cloud.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ REVIEWS ============ -->
+<section class="section">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow" style="justify-content:center; display:flex;">Customer Reviews</div>
+      <h2>Trusted by thousands of daily commuters</h2>
+    </div>
+    <div class="reviews-track reveal" id="reviewsGrid"></div>
+  </div>
+</section>
+
+<!-- ============ APP PROMO ============ -->
+<section class="section">
+  <div class="container">
+    <div class="app-promo reveal">
+      <div>
+        <div class="eyebrow"><i class="fa-solid fa-mobile-screen-button"></i> Mobile App</div>
+        <h2>Take SwiftRide Cloud wherever you go</h2>
+        <p>Get live boarding alerts, manage bookings, and pay on the move with the SwiftRide Cloud app — built on the same cloud backend as the web platform.</p>
+        <div class="store-badges">
+          <a href="#" class="store-badge"><i class="fa-brands fa-apple"></i><div class="txt"><div class="l1">Download on the</div><div class="l2">App Store</div></div></a>
+          <a href="#" class="store-badge"><i class="fa-brands fa-google-play"></i><div class="txt"><div class="l1">Get it on</div><div class="l2">Google Play</div></div></a>
+        </div>
+      </div>
+      <div class="app-mockup">
+        <div class="phone-frame">
+          <div class="screen">
+            <div class="mini-card"><div class="mini-bar orange" style="margin-bottom:6px;"></div><div class="mini-bar" style="width:80%;"></div></div>
+            <div class="mini-card"><div class="mini-bar" style="width:50%; margin-bottom:6px;"></div><div class="mini-bar" style="width:70%;"></div></div>
+            <div class="mini-card"><div class="mini-bar" style="width:65%; margin-bottom:6px;"></div><div class="mini-bar" style="width:40%;"></div></div>
+            <div class="mini-card" style="margin-top:auto;"><div class="mini-bar orange" style="width:90%;"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section class="section" style="background:var(--white);">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow" style="justify-content:center; display:flex;">FAQ</div>
+      <h2>Answers to common questions</h2>
+    </div>
+    <div class="faq-list reveal" id="faqList"></div>
+  </div>
+</section>
+
+<!-- ============ CONTACT CTA ============ -->
+<section class="section">
+  <div class="container">
+    <div class="contact-cta reveal">
+      <div>
+        <h2>Have a question we didn't cover?</h2>
+        <p>Our support team responds within minutes, every day of the week.</p>
+      </div>
+      <a href="contact.html" class="btn btn-ghost-navy">Contact Support <i class="fa-solid fa-arrow-right"></i></a>
+    </div>
+  </div>
+</section>
+
+<div id="sr-footer-mount"></div>
+
+<script src="js/data.js"></script>
+<script src="js/layout.js"></script>
+<script src="js/app.js"></script>
+<script>
+  srRenderNavbar("home");
+  srRenderFooter();
+
+  // Populate cities datalist
+  document.getElementById("citiesList").innerHTML = SR_CITIES.map(c => `<option value="${c}">`).join("");
+
+  // Default date = tomorrow
+  const dateInput = document.getElementById("dateInput");
+  const tmrw = new Date(); tmrw.setDate(tmrw.getDate() + 1);
+  dateInput.value = tmrw.toISOString().split("T")[0];
+  dateInput.min = new Date().toISOString().split("T")[0];
+
+  document.getElementById("swapCities").addEventListener("click", () => {
+    const s = document.getElementById("srcInput"), d = document.getElementById("destInput");
+    [s.value, d.value] = [d.value, s.value];
+  });
+
+  document.getElementById("homeSearchForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const params = new URLSearchParams({
+      source: document.getElementById("srcInput").value,
+      destination: document.getElementById("destInput").value,
+      date: document.getElementById("dateInput").value,
+      pax: document.getElementById("paxInput").value.charAt(0)
+    });
+    window.location.href = `search.html?${params.toString()}`;
+  });
+
+  // Popular routes (derived from mock data)
+  const popularPairs = [["Mumbai","Pune"],["Bengaluru","Chennai"],["Delhi","Jaipur"],["Hyderabad","Goa"]];
+  document.getElementById("popularRoutesGrid").innerHTML = popularPairs.map(([a,b]) => {
+    const fare = 300 + (srHash(a+b) % 900);
+    const trips = 8 + (srHash(b+a) % 20);
+    return `
+    <a href="search.html?source=${a}&destination=${b}" class="glass card-lift route-card">
+      <div class="pair"><span>${a}</span><span class="route-line"></span><span>${b}</span></div>
+      <div class="meta-row">
+        <span class="fare">₹${fare}</span>
+        <span class="trips">${trips} trips/day</span>
+      </div>
+    </a>`;
+  }).join("");
+
+  // Featured destinations
+  const destinations = [
+    { name: "Goa", tag: "Beach getaway", img: "https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?w=500&q=80&auto=format&fit=crop" },
+    { name: "Jaipur", tag: "Heritage & forts", img: "https://images.unsplash.com/photo-1599661046289-e31897846e41?w=500&q=80&auto=format&fit=crop" },
+    { name: "Manali", tag: "Mountain escape", img: "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?w=500&q=80&auto=format&fit=crop" },
+    { name: "Kochi", tag: "Backwaters", img: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=500&q=80&auto=format&fit=crop" }
+  ];
+  document.getElementById("destinationsGrid").innerHTML = destinations.map(d => `
+    <div class="dest-card card-lift">
+      <img src="${d.img}" alt="${d.name}" loading="lazy">
+      <div class="overlay"><h3>${d.name}</h3><p>${d.tag}</p></div>
+    </div>`).join("");
+
+  // Reviews
+  document.getElementById("reviewsGrid").innerHTML = SR_REVIEWS.slice(0,6).map(r => `
+    <div class="review-card card-lift">
+      <div class="review-stars">${'<i class="fa-solid fa-star"></i>'.repeat(r.rating)}${'<i class="fa-regular fa-star"></i>'.repeat(5-r.rating)}</div>
+      <p class="text">"${r.text}"</p>
+      <div class="review-foot">
+        <div class="review-avatar">${r.name.charAt(0)}</div>
+        <div><div class="name">${r.name}</div><div class="route">${r.route}</div></div>
+      </div>
+    </div>`).join("");
+
+  // FAQ
+  document.getElementById("faqList").innerHTML = SR_FAQS.map((f,i) => `
+    <div class="faq-item" data-i="${i}">
+      <div class="faq-question"><span>${f.q}</span><i class="fa-solid fa-plus"></i></div>
+      <div class="faq-answer"><p>${f.a}</p></div>
+    </div>`).join("");
+  document.querySelectorAll(".faq-question").forEach(q => {
+    q.addEventListener("click", () => {
+      const item = q.closest(".faq-item");
+      const ans = item.querySelector(".faq-answer");
+      const wasOpen = item.classList.contains("open");
+      document.querySelectorAll(".faq-item").forEach(i => { i.classList.remove("open"); i.querySelector(".faq-answer").style.maxHeight = null; });
+      if (!wasOpen) { item.classList.add("open"); ans.style.maxHeight = ans.scrollHeight + "px"; }
+    });
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard — SwiftRide Cloud</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/dashboard.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+
+<div class="dash-shell">
+  <div id="sr-dash-sidebar-mount"></div>
+
+  <main class="dash-main">
+    <div class="dash-topbar">
+      <div><h1>Admin Dashboard</h1><div class="sub">Platform-wide overview across operators, buses, and revenue.</div></div>
+      <span class="badge badge-success"><i class="fa-solid fa-circle-check"></i> All systems operational</span>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="top"><div class="icon" style="background:rgba(255,138,0,0.1); color:var(--orange-500);"><i class="fa-solid fa-users"></i></div></div>
+        <div class="val">48,920</div><div class="label">Registered Users</div>
+        <div class="trend up"><i class="fa-solid fa-arrow-up"></i> 6.2% this month</div>
+      </div>
+      <div class="stat-card">
+        <div class="top"><div class="icon" style="background:rgba(79,195,247,0.15); color:#1B82AC;"><i class="fa-solid fa-bus"></i></div></div>
+        <div class="val">1,240</div><div class="label">Active Buses</div>
+        <div class="trend up"><i class="fa-solid fa-arrow-up"></i> 38 added this month</div>
+      </div>
+      <div class="stat-card">
+        <div class="top"><div class="icon" style="background:rgba(31,170,89,0.1); color:var(--success);"><i class="fa-solid fa-building"></i></div></div>
+        <div class="val">212</div><div class="label">Operator Partners</div>
+        <div class="trend up"><i class="fa-solid fa-arrow-up"></i> 9 new this month</div>
+      </div>
+      <div class="stat-card">
+        <div class="top"><div class="icon" style="background:rgba(11,31,58,0.08); color:var(--navy-900);"><i class="fa-solid fa-indian-rupee-sign"></i></div></div>
+        <div class="val">₹4.8Cr</div><div class="label">Platform Revenue (MTD)</div>
+        <div class="trend up"><i class="fa-solid fa-arrow-up"></i> 11.3% vs last month</div>
+      </div>
+    </div>
+
+    <div class="grid" style="grid-template-columns: 1.4fr 1fr; gap:24px; align-items:start;">
+      <div class="dash-panel">
+        <div class="panel-head"><h3><i class="fa-solid fa-chart-line text-orange"></i> Bookings & Revenue, Last 14 Days</h3></div>
+        <canvas id="trendChart" height="220"></canvas>
+      </div>
+      <div class="dash-panel">
+        <div class="panel-head"><h3><i class="fa-solid fa-chart-pie text-orange"></i> Payment Method Split</h3></div>
+        <canvas id="paymentChart" height="220"></canvas>
+      </div>
+    </div>
+
+    <div class="grid" style="grid-template-columns: 1fr 1fr; gap:24px;">
+      <div class="dash-panel">
+        <div class="panel-head"><h3><i class="fa-solid fa-ticket text-orange"></i> Recent Bookings</h3><a href="admin-bookings.html" class="field-link">View all</a></div>
+        <div id="recentBookings"></div>
+      </div>
+      <div class="dash-panel">
+        <div class="panel-head"><h3><i class="fa-solid fa-triangle-exclamation text-orange"></i> Flagged Payments</h3><a href="admin-payments.html" class="field-link">View all</a></div>
+        <div id="flaggedPayments"></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/layout.js"></script>
+<script src="js/app.js"></script>
+<script>
+  const session = srRequireAuth();
+  if (session) {
+    srRenderDashSidebar("admin", "dashboard");
+
+    const days = Array.from({length:14}, (_,i) => { const d = new Date(); d.setDate(d.getDate()-13+i); return d.toLocaleDateString("en-IN",{day:'numeric',month:'short'}); });
+    new Chart(document.getElementById("trendChart"), {
+      type: 'line',
+      data: {
+        labels: days,
+        datasets: [
+          { label: 'Bookings', data: [820,910,870,990,1040,1180,1290,1150,1080,1220,1340,1410,1390,1480], borderColor: '#4FC3F7', backgroundColor: 'rgba(79,195,247,0.08)', tension:.4, fill:true, yAxisID: 'y' },
+        ]
+      },
+      options: { plugins: { legend: { display: true } }, scales: { y: { beginAtZero: true } } }
+    });
+
+    new Chart(document.getElementById("paymentChart"), {
+      type: 'pie',
+      data: { labels: ['UPI','Card','Net Banking','Wallet'], datasets: [{ data: [48, 26, 14, 12], backgroundColor: ['#FF8A00','#0B1F3A','#4FC3F7','#1FAA59'] }] },
+      options: { plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11.5 } } } } }
+    });
+
+    const recentBookings = [
+      { id: "SRC88421019", route: "Mumbai → Pune", amount: 890 },
+      { id: "SRC88420877", route: "Bengaluru → Chennai", amount: 1640 },
+      { id: "SRC88419502", route: "Delhi → Jaipur", amount: 720 },
+      { id: "SRC88418311", route: "Hyderabad → Goa", amount: 2300 },
+    ];
+    document.getElementById("recentBookings").innerHTML = recentBookings.map(b => `
+      <div class="trip-row" style="grid-template-columns: 1fr auto;">
+        <div><div class="route-txt mono" style="font-size:13px;">${b.id}</div><div class="meta-txt">${b.route}</div></div>
+        <span class="mono" style="font-weight:700;">${srFormatCurrency(b.amount)}</span>
+      </div>`).join("");
+
+    const flagged = [
+      { id: "SRC88417220", reason: "Multiple failed retries", amount: 1450 },
+      { id: "SRC88416810", reason: "Refund disputed by user", amount: 890 },
+    ];
+    document.getElementById("flaggedPayments").innerHTML = flagged.length ? flagged.map(f => `
+      <div class="trip-row" style="grid-template-columns: 1fr auto;">
+        <div><div class="route-txt mono" style="font-size:13px;">${f.id}</div><div class="meta-txt" style="color:var(--danger);">${f.reason}</div></div>
+        <span class="mono" style="font-weight:700; color:var(--danger);">${srFormatCurrency(f.amount)}</span>
+      </div>`).join("") : `<p class="text-muted" style="font-size:13.5px;">No flagged payments right now.</p>`;
+  }
+</script>
+</body>
+</html>

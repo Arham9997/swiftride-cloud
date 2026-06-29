@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Booking Management — SwiftRide Cloud Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+
+<div class="dash-shell">
+  <div id="sr-dash-sidebar-mount"></div>
+
+  <main class="dash-main">
+    <div class="dash-topbar">
+      <div><h1>Booking Management</h1><div class="sub">Platform-wide booking oversight.</div></div>
+      <div class="input-icon-wrap" style="width:240px;"><i class="fa-solid fa-magnifying-glass"></i><input class="input" id="searchInput" placeholder="Search booking ID"></div>
+    </div>
+
+    <div class="dash-panel">
+      <div class="table-wrap">
+        <table class="dash-table">
+          <thead><tr><th>Booking ID</th><th>Route</th><th>Operator</th><th>Passenger</th><th>Amount</th><th>Status</th></tr></thead>
+          <tbody id="bookingsBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/layout.js"></script>
+<script src="js/app.js"></script>
+<script>
+  const session = srRequireAuth();
+  if (session) {
+    srRenderDashSidebar("admin", "bookings");
+
+    const bookings = [
+      { id: "SRC88421019", route: "Mumbai → Pune", op: "SwiftRide Express", pax: "Aarav Mehta", amount: 890, status: "confirmed" },
+      { id: "SRC88420877", route: "Bengaluru → Chennai", op: "Orange Line Travels", pax: "Sneha Iyer", amount: 1640, status: "confirmed" },
+      { id: "SRC88419502", route: "Delhi → Jaipur", op: "SkyHop Volvo", pax: "Rohan Kulkarni", amount: 720, status: "cancelled" },
+      { id: "SRC88418311", route: "Hyderabad → Goa", op: "NavyArc Coaches", pax: "Priya Nair", amount: 2300, status: "confirmed" },
+      { id: "SRC88417220", route: "Mumbai → Goa", op: "MetroLink Buses", pax: "Vikram Singh", amount: 1450, status: "flagged" },
+    ];
+
+    function render(search) {
+      const filtered = bookings.filter(b => b.id.toLowerCase().includes(search.toLowerCase()));
+      const statusClass = { confirmed: "badge-success", cancelled: "badge-danger", flagged: "badge-orange" };
+      document.getElementById("bookingsBody").innerHTML = filtered.map(b => `
+        <tr>
+          <td class="mono">${b.id}</td><td>${b.route}</td><td>${b.op}</td><td>${b.pax}</td>
+          <td class="mono">${srFormatCurrency(b.amount)}</td>
+          <td><span class="badge ${statusClass[b.status]}">${b.status}</span></td>
+        </tr>`).join("") || `<tr><td colspan="6" style="text-align:center; padding:30px; color:var(--ink-500);">No bookings found</td></tr>`;
+    }
+    render("");
+    document.getElementById("searchInput").addEventListener("input", (e) => render(e.target.value));
+  }
+</script>
+</body>
+</html>

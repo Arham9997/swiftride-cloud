@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Dashboard — SwiftRide Cloud</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+
+<div class="dash-shell">
+  <div id="sr-dash-sidebar-mount"></div>
+
+  <main class="dash-main">
+    <div class="dash-topbar">
+      <div>
+        <h1 id="greetingHeading">Welcome back</h1>
+        <div class="sub">Here's what's happening with your trips.</div>
+      </div>
+      <a href="search.html" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Book New Trip</a>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="top"><div class="icon" style="background:rgba(255,138,0,0.1); color:var(--orange-500);"><i class="fa-solid fa-ticket"></i></div></div>
+        <div class="val" id="statTotalTrips">0</div>
+        <div class="label">Total Trips Booked</div>
+      </div>
+      <div class="stat-card">
+        <div class="top"><div class="icon" style="background:rgba(79,195,247,0.15); color:#1B82AC;"><i class="fa-solid fa-route"></i></div></div>
+        <div class="val" id="statUpcoming">0</div>
+        <div class="label">Upcoming Trips</div>
+      </div>
+      <div class="stat-card">
+        <div class="top"><div class="icon" style="background:rgba(31,170,89,0.1); color:var(--success);"><i class="fa-solid fa-wallet"></i></div></div>
+        <div class="val">₹1,240</div>
+        <div class="label">Wallet Balance</div>
+      </div>
+      <div class="stat-card">
+        <div class="top"><div class="icon" style="background:rgba(11,31,58,0.08); color:var(--navy-900);"><i class="fa-solid fa-star"></i></div></div>
+        <div class="val">680</div>
+        <div class="label">Reward Points</div>
+      </div>
+    </div>
+
+    <div class="dash-panel">
+      <div class="panel-head">
+        <h3><i class="fa-solid fa-bus text-orange"></i> Upcoming Trips</h3>
+        <a href="booking-history.html" class="field-link">View all</a>
+      </div>
+      <div id="upcomingTripsList"></div>
+    </div>
+
+    <div class="dash-panel">
+      <div class="panel-head">
+        <h3><i class="fa-solid fa-clock-rotate-left text-orange"></i> Recent Booking History</h3>
+        <a href="booking-history.html" class="field-link">View all</a>
+      </div>
+      <div id="recentHistoryList"></div>
+    </div>
+  </main>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/layout.js"></script>
+<script src="js/app.js"></script>
+<script>
+  const session = srRequireAuth();
+  if (session) {
+    srRenderDashSidebar(session.role === 'admin' ? 'admin' : session.role === 'operator' ? 'operator' : 'passenger', "dashboard");
+    document.getElementById("greetingHeading").textContent = `Welcome back, ${session.name.split(" ")[0]}`;
+
+    let bookings = srGetBookings().filter(b => b.status === "confirmed");
+    // Seed a couple of demo bookings if empty, so the dashboard isn't blank for first-time viewers
+    if (!bookings.length) {
+      const demoBus = generateBuses("Mumbai", "Pune", new Date(Date.now()+86400000*3).toISOString().split("T")[0])[0];
+      bookings = [{
+        id: srGenerateBookingId(), status: "confirmed", bus: demoBus,
+        source: "Mumbai", destination: "Pune", date: new Date(Date.now()+86400000*3).toISOString().split("T")[0],
+        seats: ["A4"], passenger: { name: session.name }, fare: { total: demoBus.fare + 40 },
+        createdAt: new Date().toISOString(), demo: true
+      }];
+    }
+
+    const today = new Date().toISOString().split("T")[0];
+    const upcoming = bookings.filter(b => b.date >= today);
+    const past = bookings.filter(b => b.date < today);
+
+    document.getElementById("statTotalTrips").textContent = bookings.length;
+    document.getElementById("statUpcoming").textContent = upcoming.length;
+
+    function tripRow(b, isPast) {
+      return `
+      <div class="trip-row">
+        <div class="trip-icon"><i class="fa-solid fa-bus"></i></div>
+        <div>
+          <div class="route-txt">${b.source} → ${b.destination}</div>
+          <div class="meta-txt">${b.bus.operator} · ${new Date(b.date+"T00:00").toLocaleDateString("en-IN",{day:'numeric',month:'short'})} · ${b.bus.depTime}</div>
+        </div>
+        <div class="meta-txt mono">Seats: ${b.seats.join(", ")}</div>
+        <span class="badge ${isPast ? 'badge-navy' : 'badge-success'}">${isPast ? 'Completed' : 'Upcoming'}</span>
+        <span class="mono" style="font-weight:700; color:var(--orange-600);">${srFormatCurrency(b.fare.total)}</span>
+      </div>`;
+    }
+
+    document.getElementById("upcomingTripsList").innerHTML = upcoming.length
+      ? upcoming.slice(0,4).map(b => tripRow(b, false)).join("")
+      : `<p class="text-muted" style="font-size:13.5px; padding:20px 0;">No upcoming trips. <a href="search.html" class="field-link">Book one now →</a></p>`;
+
+    document.getElementById("recentHistoryList").innerHTML = past.length
+      ? past.slice(0,4).map(b => tripRow(b, true)).join("")
+      : `<p class="text-muted" style="font-size:13.5px; padding:20px 0;">No completed trips yet.</p>`;
+  }
+</script>
+</body>
+</html>
