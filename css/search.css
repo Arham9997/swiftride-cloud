@@ -26,13 +26,13 @@
 @media (max-width: 920px) { .results-layout { grid-template-columns: 1fr; } }
 
 .filters-panel { background: white; border-radius: var(--r-lg); padding: 24px; border: 1px solid var(--ink-100); position: sticky; top: 100px; }
-.filters-panel h4 { font-size: 14px; margin-bottom: 14px; display:flex; align-items:center; gap:8px;}
+.filters-panel h4 { font-size: 16px; margin-bottom: 14px; display:flex; align-items:center; gap:8px;}
 .filter-group { margin-bottom: 24px; }
 .filter-group:last-child { margin-bottom: 0; }
-.filter-group .group-title { font-size: 12.5px; font-weight: 700; color: var(--ink-700); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 12px; }
-.checkbox-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 13.5px; color: var(--ink-700); cursor: pointer; }
+.filter-group .group-title { font-size: 13px; font-weight: 700; color: var(--navy-900); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 12px; }
+.checkbox-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 14.5px; color: var(--navy-900); cursor: pointer; }
 .checkbox-row input { width: 16px; height: 16px; accent-color: var(--orange-500); cursor: pointer; }
-.range-row { display: flex; justify-content: space-between; font-size: 12px; color: var(--ink-500); margin-top: 6px; }
+.range-row { display: flex; justify-content: space-between; font-size: 13px; color: var(--ink-500); margin-top: 6px; }
 
 .results-toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 12px; }
 .results-count { font-size: 14px; color: var(--ink-700); font-weight: 600; }
@@ -71,3 +71,168 @@
 .fare-block .per { font-size: 11px; color: var(--ink-500); }
 
 @media (max-width: 560px) { .fare-block { text-align: left; } }
+
+/* ===========================================================
+   Mobile Responsive Fixes
+   =========================================================== */
+
+@media (max-width:768px){
+
+    /* Overall layout */
+    .results-layout{
+        grid-template-columns:1fr;
+        gap:24px;
+    }
+
+    /* Filters Panel */
+    .filters-panel{
+        padding:24px 20px;
+        position:static;
+        top:auto;
+    }
+
+    .filters-panel h4{
+        font-size:24px;
+        color:var(--navy-900);
+        margin-bottom:24px;
+    }
+
+    /* Filter Groups */
+    .filter-group{
+        margin-bottom:32px;
+    }
+
+    .filter-group .group-title{
+        font-size:18px;
+        color:var(--navy-900);
+        margin-bottom:18px;
+        font-weight:700;
+        letter-spacing:0.5px;
+    }
+
+    /* Checkbox Rows */
+    .checkbox-row{
+        gap:14px;
+        margin-bottom:18px;
+        font-size:17px;
+        color:var(--ink-900);
+        line-height:1.6;
+    }
+
+    .checkbox-row input{
+        width:22px;
+        height:22px;
+        flex-shrink:0;
+    }
+
+    .checkbox-row label{
+        color:var(--ink-900);
+        font-weight:500;
+    }
+
+    /* Slider */
+    .range-row{
+        font-size:15px;
+        color:var(--ink-700);
+        margin-top:12px;
+    }
+
+    input[type="range"]{
+        width:100%;
+        margin-top:14px;
+        margin-bottom:12px;
+    }
+
+    /* Rating Options */
+    .rating-option{
+        margin-bottom:18px;
+    }
+
+    /* Results Toolbar */
+    .results-toolbar{
+        flex-direction:column;
+        align-items:flex-start;
+    }
+
+    /* Bus Cards */
+    .bus-card{
+        grid-template-columns:1fr;
+        gap:18px;
+        padding:22px;
+    }
+
+    .operator-block,
+    .time-block,
+    .seats-block,
+    .fare-block{
+        width:100%;
+    }
+
+    .operator-block .op-name{
+        font-size:18px;
+        line-height:1.4;
+    }
+
+    .operator-block .op-type{
+        font-size:15px;
+    }
+
+    .time-block{
+        justify-content:space-between;
+        width:100%;
+        flex-wrap:wrap;
+    }
+
+    .time-block .time-col{
+        flex:1;
+    }
+
+    .time-block .time-col .t{
+        font-size:20px;
+    }
+
+    .time-block .time-col .l{
+        font-size:13px;
+    }
+
+    .time-block .route-line{
+        width:70px;
+    }
+
+    .time-block .duration{
+        position:static;
+        width:100%;
+        text-align:center;
+        margin-top:8px;
+        font-size:13px;
+    }
+
+    .seats-block{
+        font-size:15px;
+    }
+
+    .seats-block .amenities{
+        gap:8px;
+    }
+
+    .amenity-chip{
+        font-size:12px;
+        padding:5px 10px;
+    }
+
+    .fare-block .price{
+        font-size:28px;
+    }
+
+    .fare-block{
+        text-align:left;
+    }
+
+    /* Button */
+    .btn,
+    .btn-primary{
+        width:100%;
+        justify-content:center;
+    }
+
+}
