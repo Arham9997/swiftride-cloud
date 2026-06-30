@@ -232,3 +232,105 @@ html[data-theme="dark"] .service-card .service-title {
 }
 .contact-cta h2 { color: white; font-size: clamp(24px,2.6vw,32px); }
 .contact-cta p { color: rgba(255,255,255,0.9); margin-top: 8px; }
+
+/* ==========================
+   Mobile Responsive (≤768px)
+   ========================== */
+
+@media (max-width:768px){
+
+.hero{
+    min-height:auto;
+    padding-top:90px;
+    padding-bottom:40px;
+}
+
+.hero h1{
+    font-size:2.2rem;
+    line-height:1.2;
+    text-align:center;
+}
+
+.hero p.lead{
+    font-size:15px;
+    max-width:100%;
+    text-align:center;
+}
+
+.hero-ctas{
+    justify-content:center;
+}
+
+.hero-stats{
+    justify-content:center;
+    gap:20px;
+}
+
+.hero-visual{
+    margin-top:30px;
+}
+
+/* Services */
+
+.service-card{
+    padding:22px;
+    text-align:center;
+}
+
+/* Reviews */
+
+.review-card{
+    padding:20px;
+}
+
+/* App Promotion */
+
+.phone-frame{
+    width:180px;
+    height:360px;
+}
+
+.contact-cta{
+    padding:32px 24px;
+    text-align:center;
+    justify-content:center;
+    flex-direction:column;
+    gap:20px;
+}
+
+}
+
+@media (max-width:600px){
+
+.search-widget{
+
+padding:18px;
+
+gap:14px;
+
+}
+
+.search-widget .btn{
+
+width:100%;
+
+}
+
+}
+
+@media (max-width:480px){
+
+.route-ticket{
+
+max-width:100%;
+padding:20px;
+
+}
+
+.route-cities .city .name{
+
+font-size:16px;
+
+}
+
+}
